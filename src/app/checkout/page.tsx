@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { CustomerDetailsForm, type FieldError } from "@/components/checkout/CustomerDetailsForm";
-import { DeliveryOptions } from "@/components/checkout/DeliveryOptions";
 import {
   PaymentMethod,
   type PaymentMethodType,
@@ -16,12 +15,10 @@ import { Button } from "@/components/ui/Button";
 import {
   formatPrice,
   generateOrderId,
-  getDeliveryFee,
   getTax,
   getTotal,
   isValidEmail,
   isValidPhone,
-  isValidPincode,
 } from "@/lib/utils";
 
 const ORDER_KEY = "ccc-last-order";
@@ -42,14 +39,14 @@ export default function CheckoutPage() {
 
   const [values, setValues] = useState<Record<string, string>>(initialValues);
   const [errors, setErrors] = useState<FieldError>({});
-  const [orderType, setOrderType] = useState<"pickup" | "delivery">("pickup");
   const [method, setMethod] = useState<PaymentMethodType>("cash");
   const [processing, setProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState("");
 
   const subtotal = useMemo(() => getCartSubtotal(), [getCartSubtotal]);
-  const isDelivery = orderType === "delivery";
-  const delivery = getDeliveryFee(subtotal, isDelivery);
+  const orderType: "pickup" | "delivery" = "pickup";
+  const isDelivery = false;
+  const delivery = 0;
   const tax = getTax(subtotal);
   const total = getTotal(subtotal, tax, delivery);
 
@@ -66,13 +63,6 @@ export default function CheckoutPage() {
       next.phone = "Please enter a valid 10 digit mobile number.";
     if (values.email.trim() && !isValidEmail(values.email))
       next.email = "Please enter a valid email address.";
-    if (isDelivery) {
-      if (!values.address.trim()) next.address = "Please enter your address.";
-      if (!values.city.trim()) next.city = "Please enter your city.";
-      if (!values.pincode.trim()) next.pincode = "Please enter your pincode.";
-      else if (!isValidPincode(values.pincode))
-        next.pincode = "Please enter a valid 6 digit pincode.";
-    }
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -194,7 +184,6 @@ export default function CheckoutPage() {
 
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_400px]">
         <div className="space-y-6">
-          <DeliveryOptions value={orderType} onChange={setOrderType} subtotal={subtotal} />
           <CustomerDetailsForm
             values={values}
             errors={errors}
