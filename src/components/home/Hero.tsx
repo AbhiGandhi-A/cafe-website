@@ -17,7 +17,7 @@ export function Hero() {
       <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-brand-yellow/15 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 -left-20 h-96 w-96 rounded-full bg-brand-red/15 blur-3xl" />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-10 lg:py-24 lg:px-8">
+      <div className="relative mx-auto grid max-w-screen-2xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-10 lg:py-24 lg:px-6">
         <div className="animate-fade-up text-center lg:text-left">
           <Badge tone="yellow" className="mb-5">
             🔥 Crazy Good. Extra Cheesy.
