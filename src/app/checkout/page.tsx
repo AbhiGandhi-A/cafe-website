@@ -41,6 +41,7 @@ export default function CheckoutPage() {
   const [paymentError, setPaymentError] = useState("");
   const [remember, setRemember] = useState(false);
   const [coupon] = useState(() => coupons.find((c) => c.id === getSavedCouponCode()) ?? null);
+  const [orderPlaced, setOrderPlaced] = useState(false);
   const submittingRef = useRef(false);
 
   useEffect(() => {
@@ -85,6 +86,7 @@ export default function CheckoutPage() {
   const finalizeOrder = (paymentLabel: string, paymentDetail: string) => {
     if (submittingRef.current) return;
     submittingRef.current = true;
+    setOrderPlaced(true);
 
     if (remember) {
       saveCustomerDetails({ name: values.name, phone: values.phone, email: values.email, address: values.address, city: values.city, pincode: values.pincode });
@@ -151,7 +153,7 @@ export default function CheckoutPage() {
     setProcessing(false);
   };
 
-  if (cart.length === 0) {
+  if (cart.length === 0 && !orderPlaced) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 lg:px-8">
         <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-brand-yellow/10 text-brand-yellow">
