@@ -3,7 +3,7 @@ import { Pizza } from "lucide-react";
 import { classNames } from "@/lib/utils";
 
 export function BrandLogo({
-  light = false,
+  light = true,
   className,
 }: {
   light?: boolean;
@@ -12,20 +12,17 @@ export function BrandLogo({
   return (
     <Link
       href="/"
-      className={classNames(
-        "group flex items-center gap-2.5",
-        className
-      )}
+      className={classNames("group flex items-center gap-2.5", className)}
       aria-label="Crazy Cheesy Cafe home"
     >
-      <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-yellow text-brand-charcoal shadow-soft transition-transform duration-300 group-hover:-rotate-6">
+      <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-yellow text-ink-dark shadow-soft transition-transform duration-300 group-hover:-rotate-6">
         <Pizza size={26} strokeWidth={2.2} />
       </span>
       <span className="flex flex-col leading-none">
         <span
           className={classNames(
-            "text-lg font-black uppercase tracking-tight",
-            light ? "text-brand-cream" : "text-brand-charcoal"
+            "font-display text-lg font-black uppercase tracking-tight",
+            light ? "text-brand-cream" : "text-brand-cream"
           )}
         >
           Crazy Cheesy
@@ -33,7 +30,7 @@ export function BrandLogo({
         <span
           className={classNames(
             "text-xs font-extrabold uppercase tracking-[0.35em]",
-            light ? "text-brand-yellow" : "text-brand-red"
+            light ? "text-brand-yellow" : "text-brand-yellow"
           )}
         >
           Cafe

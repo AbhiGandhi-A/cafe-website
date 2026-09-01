@@ -1,54 +1,65 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Loader2, Lock } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { CustomerDetailsForm, type FieldError } from "@/components/checkout/CustomerDetailsForm";
-import {
-  PaymentMethod,
-  type PaymentMethodType,
-  type OnlineMode,
-} from "@/components/checkout/PaymentMethod";
+import { DeliveryOptions } from "@/components/checkout/DeliveryOptions";
+import { PaymentMethod, type PaymentMethodType, type OnlineMode } from "@/components/checkout/PaymentMethod";
 import { OrderSummaryView } from "@/components/checkout/OrderSummary";
 import { Button } from "@/components/ui/Button";
+import { coupons, storeConfig } from "@/data/cafe";
+import { getItemById } from "@/data/menu";
 import {
-  formatPrice,
-  generateOrderId,
-  getTax,
-  getTotal,
+  calculateTotals,
   isValidEmail,
   isValidPhone,
+  isValidPincode,
+  formatPrice,
+  generateOrderId,
+  getSavedCouponCode,
+  getCustomerDetails,
+  saveCustomerDetails,
+  clearCustomerDetails,
 } from "@/lib/utils";
+import { saveOrder } from "@/lib/orders";
+import { useToast } from "@/components/ui/Toast";
 
-const ORDER_KEY = "ccc-last-order";
-const steps = ["Cart", "Details", "Payment", "Confirmation"];
-
-const initialValues: Record<string, string> = {
-  name: "",
-  phone: "",
-  email: "",
-  address: "",
-  city: "",
-  pincode: "",
-};
+const steps = ["Cart", "Details", "Payment", "Done"];
 
 export default function CheckoutPage() {
-  const { cart, getCartSubtotal, clearCart } = useCart();
+  const { cart, clearCart } = useCart();
   const router = useRouter();
+  const { toast } = useToast();
 
-  const [values, setValues] = useState<Record<string, string>>(initialValues);
+  const [values, setValues] = useState<Record<string, string>>({ name: "", phone: "", email: "", address: "", landmark: "", city: "", pincode: "", deliveryInstructions: "", orderNotes: "" });
   const [errors, setErrors] = useState<FieldError>({});
+  const [orderType, setOrderType] = useState<"pickup" | "delivery">("pickup");
   const [method, setMethod] = useState<PaymentMethodType>("cash");
   const [processing, setProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [coupon] = useState(() => coupons.find((c) => c.id === getSavedCouponCode()) ?? null);
+  const submittingRef = useRef(false);
 
-  const subtotal = useMemo(() => getCartSubtotal(), [getCartSubtotal]);
-  const orderType: "pickup" | "delivery" = "pickup";
-  const isDelivery = false;
-  const delivery = 0;
-  const tax = getTax(subtotal);
-  const total = getTotal(subtotal, tax, delivery);
+  useEffect(() => {
+    const saved = getCustomerDetails();
+    if (saved && Object.keys(saved).length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setValues((prev) => ({ ...prev, ...saved }));
+      setRemember(true);
+    }
+  }, []);
+
+  const isDelivery = orderType === "delivery";
+  const lookup = (id: string) => getItemById(id)?.price ?? 0;
+  const totals = useMemo(
+    () => calculateTotals(cart, lookup, isDelivery, coupon),
+    [cart, isDelivery, coupon]
+  );
+  const subtotal = totals.subtotal;
+  const minimumNotMet = isDelivery && subtotal < storeConfig.minimumDeliveryOrder;
 
   const setField = (field: string, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -59,78 +70,95 @@ export default function CheckoutPage() {
     const next: FieldError = {};
     if (!values.name.trim()) next.name = "Please enter your name.";
     if (!values.phone.trim()) next.phone = "Please enter your phone number.";
-    else if (!isValidPhone(values.phone))
-      next.phone = "Please enter a valid 10 digit mobile number.";
-    if (values.email.trim() && !isValidEmail(values.email))
-      next.email = "Please enter a valid email address.";
+    else if (!isValidPhone(values.phone)) next.phone = "Please enter a valid 10 digit mobile number.";
+    if (values.email.trim() && !isValidEmail(values.email)) next.email = "Please enter a valid email address.";
+    if (isDelivery) {
+      if (!values.address.trim()) next.address = "Please enter your delivery address.";
+      if (!values.city.trim()) next.city = "Please enter your city.";
+      if (!values.pincode.trim()) next.pincode = "Please enter your pincode.";
+      else if (!isValidPincode(values.pincode)) next.pincode = "Please enter a valid 6 digit pincode.";
+    }
     setErrors(next);
     return Object.keys(next).length === 0;
   };
 
-  const saveOrder = (paymentMethod: string, details: Record<string, string>) => {
+  const finalizeOrder = (paymentLabel: string, paymentDetail: string) => {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+
+    if (remember) {
+      saveCustomerDetails({ name: values.name, phone: values.phone, email: values.email, address: values.address, city: values.city, pincode: values.pincode });
+    }
+
     const order = {
       id: generateOrderId(),
-      items: cart.map((i) => ({ productId: i.productId, quantity: i.quantity })),
-      subtotal,
-      tax,
-      delivery,
-      total,
+      items: cart.map((i) => ({ productId: i.productId, quantity: i.quantity, customizations: i.customizations })),
+      subtotal: totals.subtotal,
+      discount: totals.discount,
+      delivery: totals.delivery,
+      tax: totals.tax,
+      total: totals.total,
       orderType,
-      paymentMethod,
-      details,
+      paymentMethod: paymentLabel,
+      couponCode: coupon?.id,
+      details: {
+        name: values.name,
+        phone: values.phone,
+        email: values.email,
+        address: values.address,
+        landmark: values.landmark,
+        city: values.city,
+        pincode: values.pincode,
+        deliveryInstructions: values.deliveryInstructions,
+        orderNotes: values.orderNotes,
+        paymentDetail,
+      },
       createdAt: new Date().toISOString(),
     };
-    try {
-      window.localStorage.setItem(ORDER_KEY, JSON.stringify(order));
-    } catch {
-      // ignore
-    }
-  };
-
-  const placeOrder = (paymentMethod: string, paymentDetails: Record<string, string>) => {
-    if (!validate()) return;
-    saveOrder(paymentMethod, paymentDetails);
+    saveOrder(order);
     clearCart();
     router.push("/order-success");
   };
 
   const handleCashOrder = () => {
-    placeOrder("cash", {});
+    if (!validate()) return;
+    if (minimumNotMet) return;
+    finalizeOrder("Cash", isDelivery ? "Cash on delivery" : "Pay at counter");
   };
 
-  const handleOnlinePay = (onlineDetails: {
-    mode: OnlineMode;
-    upi: string;
-    card: string;
-  }) => {
+  const handleOnlinePay = (details: { mode: OnlineMode; upi: string; card: string }) => {
     if (!validate()) return;
+    if (minimumNotMet) return;
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setProcessing(true);
     setPaymentError("");
     setTimeout(() => {
       const success = Math.random() > 0.15;
       setProcessing(false);
       if (success) {
-        placeOrder("online", { mode: onlineDetails.mode, upi: onlineDetails.upi });
+        toast("Order placed successfully");
+        finalizeOrder("Online", details.mode);
       } else {
-        setPaymentError(
-          "Payment failed. Please check your details and try again."
-        );
+        submittingRef.current = false;
+        setPaymentError("Payment failed. Please check your details and try again.");
       }
-    }, 2000);
+    }, 1800);
+  };
+
+  const cancelOnline = () => {
+    if (processing) return;
+    setProcessing(false);
   };
 
   if (cart.length === 0) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 lg:px-8">
-        <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-brand-yellow/20 text-brand-charcoal">
-          <CheckCircle2 size={40} />
+        <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-brand-yellow/10 text-brand-yellow">
+          <CheckCircle2 size={44} />
         </div>
-        <h1 className="mt-4 text-2xl font-black text-brand-charcoal">
-          Your cart is empty
-        </h1>
-        <p className="mt-2 text-brand-gray">
-          Add items to your cart before checking out.
-        </p>
+        <h1 className="font-display mt-4 text-2xl font-black text-brand-cream">Your cart is empty.</h1>
+        <p className="mt-2 text-brand-gray">Add items to your cart before checking out.</p>
         <Button href="/menu" variant="primary" size="lg" className="mt-5">
           Browse Menu
         </Button>
@@ -138,45 +166,36 @@ export default function CheckoutPage() {
     );
   }
 
+  const canOrder = !minimumNotMet && !processing;
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-8 text-center">
-        <p className="text-sm font-bold uppercase tracking-wider text-brand-red">
-          Almost there
-        </p>
-        <h1 className="mt-1 text-3xl font-black uppercase text-brand-charcoal sm:text-4xl">
+        <p className="text-sm font-bold uppercase tracking-wider text-brand-yellow">Almost there</p>
+        <h1 className="font-display mt-1 text-3xl font-black uppercase text-brand-cream sm:text-4xl">
           Checkout
         </h1>
-      </div>      <div className="mx-auto mb-8 flex max-w-lg items-center justify-between">
+      </div>
+
+      <div className="mx-auto mb-8 flex max-w-lg items-center justify-between">
         {steps.map((step, i) => {
           const idx = i + 1;
-          const active = idx === 3;
-          const done = idx < 3;
+          const done = idx <= 2;
           return (
             <div key={step} className="flex flex-1 flex-col items-center gap-1">
               <div className="flex w-full items-center">
-                {idx > 1 && (
-                  <div className={"h-0.5 flex-1 " + (done ? "bg-brand-yellow" : "bg-brand-border")} />
-                )}
+                {idx > 1 && <div className={"h-0.5 flex-1 " + (done ? "bg-brand-yellow" : "bg-ink-line")} />}
                 <span
                   className={
                     "grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold " +
-                    (done
-                      ? "bg-brand-yellow text-brand-charcoal"
-                      : active
-                        ? "bg-brand-charcoal text-brand-yellow"
-                        : "bg-brand-border text-brand-gray")
+                    (done ? "bg-brand-yellow text-ink-dark" : "bg-ink-card text-brand-gray")
                   }
                 >
                   {done ? "✓" : idx}
                 </span>
-                {idx < 4 && (
-                  <div className={"h-0.5 flex-1 " + (done ? "bg-brand-yellow" : "bg-brand-border")} />
-                )}
+                {idx < 4 && <div className={"h-0.5 flex-1 " + (done ? "bg-brand-yellow" : "bg-ink-line")} />}
               </div>
-              <span className="hidden text-[10px] font-bold uppercase text-brand-gray sm:block">
-                {step}
-              </span>
+              <span className="hidden text-[10px] font-bold uppercase text-brand-gray sm:block">{step}</span>
             </div>
           );
         })}
@@ -184,48 +203,81 @@ export default function CheckoutPage() {
 
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_400px]">
         <div className="space-y-6">
+          <DeliveryOptions value={orderType} onChange={setOrderType} subtotal={subtotal} />
+
           <CustomerDetailsForm
             values={values}
             errors={errors}
             onChange={setField}
             isDelivery={isDelivery}
+            remember={remember}
+            onRememberChange={setRemember}
+            onClearSaved={() => {
+              clearCustomerDetails();
+              setRemember(false);
+              setValues((prev) => ({ ...prev, name: "", phone: "", email: "", address: "", landmark: "", city: "", pincode: "" }));
+              toast("Saved details cleared");
+            }}
           />
+
+          {isDelivery && minimumNotMet && (
+            <div className="rounded-2xl border border-brand-red/40 bg-brand-red/10 p-4 text-sm font-semibold text-brand-red">
+              Minimum {formatPrice(storeConfig.minimumDeliveryOrder)} required for delivery. Pickup is always available.
+            </div>
+          )}
+
           <PaymentMethod
             method={method}
             onMethodChange={(m) => {
               setMethod(m);
               setPaymentError("");
             }}
-            total={total}
+            total={totals.total}
             onPay={handleOnlinePay}
             processing={processing}
             error={paymentError}
           />
 
           {method === "cash" && (
-            <div className="rounded-3xl border border-brand-border bg-white p-6 shadow-card">
+            <div className="card-dark p-6">
               <Button
                 variant="primary"
                 size="full"
-                onClick={handleCashOrder}
+                onClick={() => {
+                  cancelOnline();
+                  handleCashOrder();
+                }}
+                disabled={!canOrder}
                 className="py-4 text-lg"
               >
-                Place Order — {formatPrice(total)}
+                {processing ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" /> Placing Order...
+                  </>
+                ) : (
+                  <>Place Order — {formatPrice(totals.total)}</>
+                )}
               </Button>
               <p className="mt-2 text-center text-xs text-brand-gray">
-                Pay at counter.
+                {isDelivery ? "Pay cash on delivery." : "Pay at counter."}
               </p>
             </div>
           )}
+
+          <p className="flex items-center justify-center gap-1.5 text-xs text-brand-gray">
+            <Lock size={12} /> This is a frontend demo — no real payment or delivery occurs.
+          </p>
         </div>
 
         <div className="lg:sticky lg:top-20">
           <OrderSummaryView
             lines={cart}
-            subtotal={subtotal}
-            delivery={delivery}
-            tax={tax}
-            total={total}
+            subtotal={totals.subtotal}
+            discount={totals.discount}
+            delivery={totals.delivery}
+            tax={totals.tax}
+            total={totals.total}
+            couponLabel={coupon ? coupon.id : undefined}
             paymentLabel={method}
           />
         </div>

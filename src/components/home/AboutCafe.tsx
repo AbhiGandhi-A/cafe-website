@@ -22,7 +22,7 @@ export function AboutCafe() {
               className="h-72 w-full object-cover sm:h-96"
             />
           </div>
-          <div className="absolute -bottom-5 -right-3 rounded-2xl bg-brand-dark px-5 py-4 text-brand-yellow shadow-lift sm:-right-6">
+          <div className="absolute -bottom-5 -right-3 rounded-2xl bg-brand-yellow px-5 py-4 text-ink-dark shadow-lift sm:-right-6">
             <p className="text-3xl font-black">9+</p>
             <p className="text-xs font-semibold uppercase tracking-wider">
               Cheesy Categories
@@ -31,10 +31,10 @@ export function AboutCafe() {
         </div>
 
         <div className="order-1 lg:order-2">
-          <p className="text-sm font-bold uppercase tracking-wider text-brand-red">
+          <p className="text-sm font-bold uppercase tracking-wider text-brand-yellow">
             About the Cafe
           </p>
-          <h2 className="mt-2 text-3xl font-black uppercase text-brand-charcoal sm:text-4xl">
+          <h2 className="font-display mt-2 text-3xl font-black uppercase text-brand-cream sm:text-4xl">
             Made For Your Cheesy Moments
           </h2>
           <p className="mt-4 text-brand-gray">
@@ -45,11 +45,11 @@ export function AboutCafe() {
           <ul className="mt-6 space-y-4">
             {points.map(({ icon: Icon, title, desc }) => (
               <li key={title} className="flex items-start gap-3">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand-yellow/25 text-brand-charcoal">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand-yellow/15 text-brand-yellow">
                   <Icon size={22} />
                 </span>
                 <div>
-                  <p className="font-extrabold text-brand-charcoal">{title}</p>
+                  <p className="font-extrabold text-brand-cream">{title}</p>
                   <p className="text-sm text-brand-gray">{desc}</p>
                 </div>
               </li>

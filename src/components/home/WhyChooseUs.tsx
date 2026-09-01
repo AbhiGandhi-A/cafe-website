@@ -25,13 +25,13 @@ const reasons = [
 
 export function WhyChooseUs() {
   return (
-    <section className="bg-brand-charcoal py-16 sm:py-20">
+    <section className="bg-ink-dark py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8 text-center">
           <p className="text-sm font-bold uppercase tracking-wider text-brand-yellow">
             Why Us
           </p>
-          <h2 className="mt-1 text-3xl font-black uppercase text-brand-cream sm:text-4xl">
+          <h2 className="font-display mt-1 text-3xl font-black uppercase text-brand-cream sm:text-4xl">
             Why Choose Us
           </h2>
         </div>
@@ -42,10 +42,10 @@ export function WhyChooseUs() {
               key={title}
               className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:bg-white/10"
             >
-              <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-brand-yellow text-brand-charcoal">
+              <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-brand-yellow text-ink-dark">
                 <Icon size={26} />
               </span>
-              <h3 className="mt-4 text-lg font-extrabold text-brand-cream">
+              <h3 className="font-display mt-4 text-lg font-extrabold text-brand-cream">
                 {title}
               </h3>
               <p className="mt-1.5 text-sm text-brand-cream/70">{desc}</p>

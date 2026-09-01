@@ -1,14 +1,16 @@
 import type { ReactNode } from "react";
 import { classNames } from "@/lib/utils";
 
-type Tone = "yellow" | "red" | "green" | "dark" | "cream";
+type Tone = "yellow" | "red" | "green" | "dark" | "cream" | "hot" | "new";
 
 const toneClasses: Record<Tone, string> = {
-  yellow: "bg-brand-yellow text-brand-charcoal",
+  yellow: "bg-brand-yellow text-ink-dark",
   red: "bg-brand-red text-white",
   green: "bg-green-600 text-white",
-  dark: "bg-brand-charcoal text-brand-yellow",
-  cream: "bg-white/90 text-brand-charcoal backdrop-blur",
+  dark: "bg-ink-charcoal text-brand-yellow border border-ink-line",
+  cream: "bg-white/90 text-ink-dark backdrop-blur",
+  hot: "bg-gradient-to-r from-brand-red to-orange-500 text-white",
+  new: "bg-green-600/90 text-white",
 };
 
 export function Badge({

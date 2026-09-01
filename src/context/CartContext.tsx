@@ -10,104 +10,120 @@ import {
   type ReactNode,
 } from "react";
 import { menuItems, getItemById } from "@/data/menu";
+import type { CartLine, CartCustomization } from "@/lib/cart";
+import {
+  readStorage,
+  writeStorage,
+  STORAGE_KEYS,
+} from "@/lib/storage";
 
-export interface CartItem {
-  productId: string;
-  quantity: number;
-}
+export const getLineKey = (productId: string, customizations: CartCustomization[] = []) =>
+  `${productId}|${customizations.map((c) => c.code).sort().join(",")}`;
 
 interface CartContextValue {
-  cart: CartItem[];
-  addToCart: (productId: string, quantity?: number) => void;
-  removeFromCart: (productId: string) => void;
-  increaseQuantity: (productId: string) => void;
-  decreaseQuantity: (productId: string) => void;
+  cart: CartLine[];
+  addToCart: (
+    productId: string,
+    quantity?: number,
+    customizations?: CartCustomization[]
+  ) => boolean;
+  removeFromCart: (key: string) => void;
+  increaseQuantity: (key: string) => void;
+  decreaseQuantity: (key: string) => void;
   clearCart: () => void;
-  getCartCount: () => number;
-  getCartSubtotal: () => number;
   cartCount: number;
   isCartOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
+  favorites: string[];
+  toggleFavorite: (id: string) => boolean;
+  recentlyViewed: string[];
+  trackRecentlyViewed: (id: string) => void;
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
-const STORAGE_KEY = "ccc-cart";
-
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartLine[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [recentlyViewed, setRecentlyViewed] = useState<string[]>([]);
 
   const openCart = useCallback(() => setIsCartOpen(true), []);
   const closeCart = useCallback(() => setIsCartOpen(false), []);
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as CartItem[];
-        if (Array.isArray(parsed)) {
-          const valid = parsed.filter(
-            (item) =>
-              item &&
-              typeof item.productId === "string" &&
-              typeof item.quantity === "number"
-          );
-          // eslint-disable-next-line react-hooks/set-state-in-effect
-          setCart(valid);
-        }
-      }
-    } catch {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCart([]);
-    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCart(readStorage<CartLine[]>(STORAGE_KEYS.cart, []));
+    setFavorites(readStorage<string[]>(STORAGE_KEYS.favorites, []));
+    setRecentlyViewed(
+      readStorage<string[]>(STORAGE_KEYS.recentlyViewed, [])
+    );
     setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
-    } catch {
-      // ignore storage write failures
-    }
+    writeStorage(STORAGE_KEYS.cart, cart);
   }, [cart, hydrated]);
 
-  const addToCart = useCallback((productId: string, quantity = 1) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.productId === productId);
-      if (existing) {
-        return prev.map((item) =>
-          item.productId === productId
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      }
-      return [...prev, { productId, quantity }];
-    });
+  useEffect(() => {
+    if (!hydrated) return;
+    writeStorage(STORAGE_KEYS.favorites, favorites);
+  }, [favorites, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    writeStorage(STORAGE_KEYS.recentlyViewed, recentlyViewed);
+  }, [recentlyViewed, hydrated]);
+
+  const addToCart = useCallback(
+    (
+      productId: string,
+      quantity = 1,
+      customizations: CartCustomization[] = []
+    ): boolean => {
+      const product = getItemById(productId);
+      if (!product || product.available === false) return false;
+      const key = getLineKey(productId, customizations);
+      setCart((prev) => {
+        const existing = prev.find((item) => getLineKey(item.productId, item.customizations) === key);
+        if (existing) {
+          return prev.map((item) =>
+            getLineKey(item.productId, item.customizations) === key
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          );
+        }
+        return [...prev, { productId, quantity, customizations }];
+      });
+      return true;
+    },
+    []
+  );
+
+  const removeFromCart = useCallback((key: string) => {
+    setCart((prev) =>
+      prev.filter((item) => getLineKey(item.productId, item.customizations) !== key)
+    );
   }, []);
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prev) => prev.filter((item) => item.productId !== productId));
-  }, []);
-
-  const increaseQuantity = useCallback((productId: string) => {
+  const increaseQuantity = useCallback((key: string) => {
     setCart((prev) =>
       prev.map((item) =>
-        item.productId === productId
+        getLineKey(item.productId, item.customizations) === key
           ? { ...item, quantity: item.quantity + 1 }
           : item
       )
     );
   }, []);
 
-  const decreaseQuantity = useCallback((productId: string) => {
+  const decreaseQuantity = useCallback((key: string) => {
     setCart((prev) =>
       prev
         .map((item) =>
-          item.productId === productId
+          getLineKey(item.productId, item.customizations) === key
             ? { ...item, quantity: item.quantity - 1 }
             : item
         )
@@ -119,16 +135,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart([]);
   }, []);
 
-  const getCartCount = useCallback(() => {
-    return cart.reduce((sum, item) => sum + item.quantity, 0);
-  }, [cart]);
+  const toggleFavorite = useCallback((id: string): boolean => {
+    let added = false;
+    setFavorites((prev) => {
+      const exists = prev.includes(id);
+      added = !exists;
+      return exists ? prev.filter((f) => f !== id) : [...prev, id];
+    });
+    return added;
+  }, []);
 
-  const getCartSubtotal = useCallback(() => {
-    return cart.reduce((sum, item) => {
-      const product = getItemById(item.productId);
-      return sum + (product ? product.price * item.quantity : 0);
-    }, 0);
-  }, [cart]);
+  const trackRecentlyViewed = useCallback((id: string) => {
+    setRecentlyViewed((prev) => [id, ...prev.filter((x) => x !== id)].slice(0, 6));
+  }, []);
 
   const cartCount = useMemo(
     () => cart.reduce((sum, item) => sum + item.quantity, 0),
@@ -143,12 +162,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       increaseQuantity,
       decreaseQuantity,
       clearCart,
-      getCartCount,
-      getCartSubtotal,
       cartCount,
       isCartOpen,
       openCart,
       closeCart,
+      favorites,
+      toggleFavorite,
+      recentlyViewed,
+      trackRecentlyViewed,
     }),
     [
       cart,
@@ -157,12 +178,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       increaseQuantity,
       decreaseQuantity,
       clearCart,
-      getCartCount,
-      getCartSubtotal,
       cartCount,
       isCartOpen,
       openCart,
       closeCart,
+      favorites,
+      toggleFavorite,
+      recentlyViewed,
+      trackRecentlyViewed,
     ]
   );
 
@@ -171,9 +194,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
 export function useCart() {
   const context = useContext(CartContext);
-  if (!context) {
-    throw new Error("useCart must be used within a CartProvider");
-  }
+  if (!context) throw new Error("useCart must be used within a CartProvider");
   return context;
 }
 

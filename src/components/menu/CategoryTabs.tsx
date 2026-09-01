@@ -17,7 +17,7 @@ export function CategoryTabs({
   onChange: (id: string) => void;
 }) {
   return (
-    <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+    <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
       {tabs.map((tab) => {
         const isActive = tab.id === active;
         return (
@@ -27,10 +27,10 @@ export function CategoryTabs({
             onClick={() => onChange(tab.id)}
             aria-pressed={isActive}
             className={classNames(
-              "shrink-0 rounded-full border-2 px-4 py-2 text-sm font-bold transition-all duration-200",
+              "shrink-0 rounded-full border px-4 py-2 text-sm font-bold transition-all duration-200",
               isActive
-                ? "border-brand-charcoal bg-brand-charcoal text-brand-yellow"
-                : "border-brand-border bg-white text-brand-charcoal/70 hover:border-brand-charcoal/40 hover:text-brand-charcoal"
+                ? "border-brand-yellow bg-brand-yellow text-ink-dark"
+                : "border-ink-line bg-ink-card text-brand-cream/70 hover:border-white/30 hover:text-brand-cream"
             )}
           >
             {tab.label}

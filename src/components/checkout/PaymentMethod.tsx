@@ -1,15 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Banknote, CreditCard, Wallet, Landmark, Loader2 } from "lucide-react";
-import { classNames } from "@/lib/utils";
-import { formatPrice } from "@/lib/utils";
+import { Banknote, CreditCard, Wallet, Landmark, Loader2, ShieldCheck } from "lucide-react";
+import { classNames, formatPrice } from "@/lib/utils";
 
 export type PaymentMethodType = "cash" | "online";
 export type OnlineMode = "upi" | "card" | "netbanking";
 
-const inputBase =
-  "w-full rounded-2xl border-2 border-brand-border bg-white px-4 py-3 text-brand-charcoal placeholder:text-brand-gray focus:border-brand-yellow focus:outline-none transition-colors";
+const inputBase = "input-dark";
+
+const upiApps = [
+  { id: "gpay", label: "Google Pay" },
+  { id: "phonepe", label: "PhonePe" },
+  { id: "paytm", label: "Paytm" },
+];
 
 export function PaymentMethod({
   method,
@@ -28,15 +32,29 @@ export function PaymentMethod({
 }) {
   const [onlineMode, setOnlineMode] = useState<OnlineMode>("upi");
   const [upi, setUpi] = useState("");
+  const [upiApp, setUpiApp] = useState<string>("gpay");
   const [cardNumber, setCardNumber] = useState("");
+  const [cardName, setCardName] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
   const [localError, setLocalError] = useState("");
 
+  const formatCard = (v: string) =>
+    v
+      .replace(/\D/g, "")
+      .slice(0, 16)
+      .replace(/(\d{4})(?=\d)/g, "$1 ");
+
+  const formatExpiry = (v: string) => {
+    const d = v.replace(/\D/g, "").slice(0, 4);
+    if (d.length >= 3) return d.slice(0, 2) + "/" + d.slice(2);
+    return d;
+  };
+
   const handleOnlinePay = () => {
     if (onlineMode === "upi") {
       if (!/^[\w.\-]+@[\w]+$/.test(upi.trim())) {
-        setLocalError("Please enter a valid UPI ID (e.g. name@upi).");
+        setLocalError("Please enter a valid UPI ID (e.g. name@upi) or select an app.");
         return;
       }
     } else if (onlineMode === "card") {
@@ -44,108 +62,86 @@ export function PaymentMethod({
         setLocalError("Please enter a valid card number.");
         return;
       }
-      if (!expiry.trim()) {
-        setLocalError("Please enter card expiry.");
+      if (!cardName.trim()) {
+        setLocalError("Please enter the cardholder name.");
+        return;
+      }
+      if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+        setLocalError("Please enter a valid expiry (MM/YY).");
         return;
       }
       if (cvv.length < 3) {
         setLocalError("Please enter a valid CVV.");
         return;
       }
+    } else {
+      setLocalError("");
+      onPay({ mode: onlineMode, upi: "", card: "" });
+      return;
     }
     setLocalError("");
-    onPay({ mode: onlineMode, upi: upi.trim(), card: cardNumber.trim() });
+    onPay({ mode: onlineMode, upi: upi.trim() || upiApp, card: cardNumber.trim() });
   };
 
   return (
-    <div className="rounded-3xl border border-brand-border bg-white p-6 shadow-card">
-      <h2 className="text-lg font-extrabold uppercase tracking-wide text-brand-charcoal">
+    <div className="card-dark p-6">
+      <h2 className="font-display text-lg font-extrabold uppercase tracking-wide text-brand-cream">
         Payment Method
       </h2>
-      <p className="mt-1 text-sm text-brand-gray">
-        This is a frontend demo — no real payment is processed.
+      <p className="mt-1 flex items-center gap-1.5 text-sm text-brand-gray">
+        <ShieldCheck size={14} className="text-green-500" /> 🔒 Secure demo payment — no real charge
       </p>
 
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <button
-          type="button"
-          onClick={() => onMethodChange("cash")}
-          aria-pressed={method === "cash"}
-          className={classNames(
-            "flex items-center gap-3 rounded-2xl border-2 p-4 text-left transition-all",
-            method === "cash"
-              ? "border-brand-charcoal bg-brand-yellow/15"
-              : "border-brand-border hover:border-brand-charcoal/40"
-          )}
-        >
-          <span
-            className={classNames(
-              "grid h-12 w-12 shrink-0 place-items-center rounded-2xl",
-              method === "cash"
-                ? "bg-brand-charcoal text-brand-yellow"
-                : "bg-black/5 text-brand-charcoal"
-            )}
-          >
-            <Banknote size={24} />
-          </span>
-          <span>
-            <span className="block font-extrabold text-brand-charcoal">
-              Pay at Counter / Cash
-            </span>
-              <span className="block text-sm text-brand-gray">
-                Pay at counter
+        {(
+          [
+            { id: "cash" as const, icon: Banknote, title: "Pay at Counter / Cash", desc: "Pay at counter or on delivery" },
+            { id: "online" as const, icon: Wallet, title: "Online Payment", desc: "UPI, Card or Net Banking (demo)" },
+          ]
+        ).map(({ id, icon: Icon, title, desc }) => {
+          const selected = method === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              onClick={() => onMethodChange(id)}
+              aria-pressed={selected}
+              className={classNames(
+                "flex items-center gap-3 rounded-2xl border p-4 text-left transition-all",
+                selected ? "border-brand-yellow bg-brand-yellow/10" : "border-ink-line hover:border-white/30"
+              )}
+            >
+              <span
+                className={classNames(
+                  "grid h-12 w-12 shrink-0 place-items-center rounded-2xl",
+                  selected ? "bg-brand-yellow text-ink-dark" : "bg-ink-charcoal text-brand-cream"
+                )}
+              >
+                <Icon size={24} />
               </span>
-          </span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => onMethodChange("online")}
-          aria-pressed={method === "online"}
-          className={classNames(
-            "flex items-center gap-3 rounded-2xl border-2 p-4 text-left transition-all",
-            method === "online"
-              ? "border-brand-charcoal bg-brand-yellow/15"
-              : "border-brand-border hover:border-brand-charcoal/40"
-          )}
-        >
-          <span
-            className={classNames(
-              "grid h-12 w-12 shrink-0 place-items-center rounded-2xl",
-              method === "online"
-                ? "bg-brand-charcoal text-brand-yellow"
-                : "bg-black/5 text-brand-charcoal"
-            )}
-          >
-            <Wallet size={24} />
-          </span>
-          <span>
-            <span className="block font-extrabold text-brand-charcoal">
-              Online Payment
-            </span>
-            <span className="block text-sm text-brand-gray">
-              UPI, Card or Net Banking (demo)
-            </span>
-          </span>
-        </button>
+              <span>
+                <span className="block font-extrabold text-brand-cream">{title}</span>
+                <span className="block text-sm text-brand-gray">{desc}</span>
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {method === "online" && (
-        <div className="mt-5 animate-fade-in rounded-2xl border border-brand-border bg-brand-cream/50 p-4">
-          <p className="text-sm font-bold text-brand-charcoal">
+        <div className="mt-5 animate-fade-in rounded-2xl border border-ink-line bg-ink-charcoal p-4">
+          <p className="text-sm font-bold text-brand-cream">
             Payment Amount:{" "}
-            <span className="text-lg font-black text-brand-red">
-              {formatPrice(total)}
-            </span>
+            <span className="text-lg font-black text-brand-yellow">{formatPrice(total)}</span>
           </p>
 
           <div className="mt-3 grid grid-cols-3 gap-2">
             {(
               [
-                { id: "upi", label: "UPI", icon: Wallet },
-                { id: "card", label: "Card", icon: CreditCard },
-                { id: "netbanking", label: "Net Banking", icon: Landmark },
-              ] as const
+                { id: "upi" as const, label: "UPI", icon: Wallet },
+                { id: "card" as const, label: "Card", icon: CreditCard },
+                { id: "netbanking" as const, label: "Net Banking", icon: Landmark },
+              ]
             ).map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
@@ -153,10 +149,10 @@ export function PaymentMethod({
                 onClick={() => setOnlineMode(id)}
                 aria-pressed={onlineMode === id}
                 className={classNames(
-                  "flex flex-col items-center gap-1 rounded-xl border-2 p-3 text-xs font-bold transition-all",
+                  "flex flex-col items-center gap-1 rounded-xl border p-3 text-xs font-bold transition-all",
                   onlineMode === id
-                    ? "border-brand-charcoal bg-brand-charcoal text-brand-yellow"
-                    : "border-brand-border bg-white text-brand-charcoal/70 hover:border-brand-charcoal/40"
+                    ? "border-brand-yellow bg-brand-yellow/15 text-brand-yellow"
+                    : "border-ink-line bg-ink-card text-brand-cream/70 hover:border-white/30"
                 )}
               >
                 <Icon size={20} />
@@ -168,9 +164,25 @@ export function PaymentMethod({
           <div className="mt-4 space-y-3">
             {onlineMode === "upi" && (
               <div>
-                <label className="mb-1 block text-sm font-bold text-brand-charcoal">
-                  UPI ID
-                </label>
+                <div className="mb-1.5 flex flex-wrap gap-2">
+                  {upiApps.map((app) => (
+                    <button
+                      key={app.id}
+                      type="button"
+                      onClick={() => setUpiApp(app.id)}
+                      aria-pressed={upiApp === app.id}
+                      className={classNames(
+                        "rounded-full border px-3 py-1.5 text-xs font-semibold transition-all",
+                        upiApp === app.id
+                          ? "border-brand-yellow bg-brand-yellow/15 text-brand-yellow"
+                          : "border-ink-line text-brand-cream/70"
+                      )}
+                    >
+                      {app.label}
+                    </button>
+                  ))}
+                </div>
+                <label className="mb-1 block text-sm font-bold text-brand-cream">UPI ID</label>
                 <input
                   type="text"
                   className={inputBase}
@@ -188,76 +200,74 @@ export function PaymentMethod({
             {onlineMode === "card" && (
               <>
                 <div>
-                  <label className="mb-1 block text-sm font-bold text-brand-charcoal">
-                    Card Number
-                  </label>
+                  <label className="mb-1 block text-sm font-bold text-brand-cream">Card Number</label>
                   <input
                     type="text"
                     className={inputBase}
                     value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value)}
+                    onChange={(e) => setCardNumber(formatCard(e.target.value))}
                     placeholder="1234 5678 9012 3456"
                     aria-label="Card number"
                     inputMode="numeric"
                   />
                 </div>
+                <div>
+                  <label className="mb-1 block text-sm font-bold text-brand-cream">Cardholder Name</label>
+                  <input
+                    type="text"
+                    className={inputBase}
+                    value={cardName}
+                    onChange={(e) => setCardName(e.target.value)}
+                    placeholder="Name on card"
+                    aria-label="Cardholder name"
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="mb-1 block text-sm font-bold text-brand-charcoal">
-                      Expiry
-                    </label>
+                    <label className="mb-1 block text-sm font-bold text-brand-cream">Expiry</label>
                     <input
                       type="text"
                       className={inputBase}
                       value={expiry}
-                      onChange={(e) => setExpiry(e.target.value)}
+                      onChange={(e) => setExpiry(formatExpiry(e.target.value))}
                       placeholder="MM/YY"
                       aria-label="Card expiry"
+                      inputMode="numeric"
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-bold text-brand-charcoal">
-                      CVV
-                    </label>
+                    <label className="mb-1 block text-sm font-bold text-brand-cream">CVV</label>
                     <input
                       type="password"
                       className={inputBase}
                       value={cvv}
-                      onChange={(e) => setCvv(e.target.value)}
+                      onChange={(e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 4))}
                       placeholder="123"
                       aria-label="CVV"
                       inputMode="numeric"
                     />
                   </div>
                 </div>
+                <p className="mt-1 text-[11px] text-brand-gray">
+                  Card details are never stored on this device.
+                </p>
               </>
             )}
 
             {onlineMode === "netbanking" && (
               <div>
-                <label className="mb-1 block text-sm font-bold text-brand-charcoal">
-                  Select Bank
-                </label>
-                <select
-                  className={inputBase}
-                  aria-label="Select bank"
-                  defaultValue=""
-                >
-                  <option value="" disabled>
-                    Choose your bank
-                  </option>
-                  <option>Demo Bank</option>
-                  <option>Example National Bank</option>
+                <label className="mb-1 block text-sm font-bold text-brand-cream">Select Bank</label>
+                <select className={inputBase} aria-label="Select bank" defaultValue="">
+                  <option value="" disabled>Choose your bank</option>
+                  <option value="demo">Demo Bank</option>
+                  <option value="example">Example National Bank</option>
                 </select>
               </div>
             )}
           </div>
 
           {(localError || error) && (
-            <p
-              className="mt-3 rounded-xl bg-brand-red/10 px-3 py-2 text-sm font-medium text-brand-red"
-              role="alert"
-            >
+            <p className="mt-3 rounded-xl bg-brand-red/10 px-3 py-2 text-sm font-medium text-brand-red" role="alert">
               {localError || error}
             </p>
           )}
@@ -266,11 +276,11 @@ export function PaymentMethod({
             type="button"
             onClick={handleOnlinePay}
             disabled={processing}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-brand-charcoal px-6 py-3.5 font-bold text-brand-yellow transition-all hover:-translate-y-0.5 hover:bg-brand-dark active:scale-95 disabled:opacity-60"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-brand-yellow px-6 py-3.5 font-bold text-ink-dark transition-all hover:-translate-y-0.5 hover:bg-brand-yellow-light active:scale-95 disabled:opacity-60"
           >
             {processing ? (
               <>
-                <Loader2 size={18} className="animate-spin" /> Processing...
+                <Loader2 size={18} className="animate-spin" /> Processing Payment...
               </>
             ) : (
               <>Pay {formatPrice(total)}</>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Minus, Plus } from "lucide-react";
-import { Button } from "./Button";
+import { classNames } from "@/lib/utils";
 
 export function QuantitySelector({
   quantity,
@@ -18,17 +18,24 @@ export function QuantitySelector({
   const textSize = small ? "text-sm" : "text-base";
 
   return (
-    <div className="inline-flex items-center gap-1 rounded-full border-2 border-brand-charcoal bg-white">
+    <div className="inline-flex items-center gap-1 rounded-full border border-ink-line bg-ink-charcoal">
       <button
         type="button"
         aria-label="Decrease quantity"
         onClick={onDecrease}
-        className={`${btnSize} grid place-items-center rounded-full text-brand-charcoal transition-colors hover:bg-brand-charcoal hover:text-brand-yellow active:scale-90`}
+        className={classNames(
+          btnSize,
+          "grid place-items-center rounded-full text-brand-cream transition-colors hover:bg-white/10 hover:text-brand-yellow active:scale-90 disabled:opacity-30"
+        )}
+        disabled={quantity <= 1}
       >
         <Minus size={small ? 14 : 16} strokeWidth={3} />
       </button>
       <span
-        className={`${textSize} w-6 text-center font-bold tabular-nums text-brand-charcoal`}
+        className={classNames(
+          textSize,
+          "w-6 text-center font-bold tabular-nums text-brand-cream"
+        )}
       >
         {quantity}
       </span>
@@ -36,7 +43,10 @@ export function QuantitySelector({
         type="button"
         aria-label="Increase quantity"
         onClick={onIncrease}
-        className={`${btnSize} grid place-items-center rounded-full text-brand-charcoal transition-colors hover:bg-brand-charcoal hover:text-brand-yellow active:scale-90`}
+        className={classNames(
+          btnSize,
+          "grid place-items-center rounded-full text-brand-cream transition-colors hover:bg-white/10 hover:text-brand-yellow active:scale-90"
+        )}
       >
         <Plus size={small ? 14 : 16} strokeWidth={3} />
       </button>
@@ -59,9 +69,16 @@ export function AddToCartButton({
 }) {
   if (quantity === 0) {
     return (
-      <Button size={size} onClick={onAdd}>
+      <button
+        type="button"
+        onClick={onAdd}
+        className={classNames(
+          "inline-flex items-center gap-1 rounded-full bg-brand-yellow font-bold text-ink-dark transition-all hover:bg-brand-yellow-light hover:-translate-y-0.5 active:scale-95",
+          size === "sm" ? "px-3.5 py-1.5 text-sm" : "px-5 py-2.5 text-sm"
+        )}
+      >
         + Add
-      </Button>
+      </button>
     );
   }
   return (

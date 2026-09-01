@@ -1,125 +1,201 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Search, ShoppingBag, X } from "lucide-react";
+import { Menu, Search, ShoppingBag, X, Flame } from "lucide-react";
 import { BrandLogo } from "./BrandLogo";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/context/CartContext";
 import { classNames } from "@/lib/utils";
+import { cafeInfo } from "@/data/cafe";
+import { OpenStatusPill } from "@/components/ui/OpenStatus";
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/menu", label: "Menu" },
-  { href: "/#about", label: "About" },
+  { href: "/about", label: "About" },
   { href: "/#contact", label: "Contact" },
 ];
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [announceVisible, setAnnounceVisible] = useState(true);
   const { cartCount, openCart } = useCart();
   const pathname = usePathname();
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href.replace("/#", "/"));
+
   return (
-    <header className="sticky top-0 z-50 border-b border-black/5 bg-white/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <BrandLogo />
-
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
-          {navLinks.map((link) => {
-            const active =
-              link.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(link.href.replace("/#", "/"));
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={classNames(
-                  "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
-                  active
-                    ? "bg-brand-yellow text-brand-charcoal"
-                    : "text-brand-charcoal/70 hover:bg-black/5 hover:text-brand-charcoal"
-                )}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          <Link
-            href="/menu?search="
-            aria-label="Search menu"
-            className="grid h-10 w-10 place-items-center rounded-full text-brand-charcoal/70 transition-colors hover:bg-black/5 hover:text-brand-charcoal"
-          >
-            <Search size={20} />
-          </Link>
-
-          <button
-            type="button"
-            onClick={openCart}
-            aria-label={`Open cart, ${cartCount} items`}
-            className="relative grid h-10 w-10 place-items-center rounded-full text-brand-charcoal/70 transition-colors hover:bg-black/5 hover:text-brand-charcoal"
-          >
-            <ShoppingBag size={20} />
-            {cartCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-brand-red px-1 text-[11px] font-bold text-white">
-                {cartCount}
+    <>
+      {announceVisible && (
+        <div className="relative z-50 border-b border-white/5 bg-gradient-to-r from-brand-yellow/15 via-brand-red/10 to-transparent">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 text-xs font-semibold text-brand-cream/90 sm:px-6 lg:px-8">
+            <p className="flex items-center gap-1.5 truncate">
+              <Flame size={14} className="shrink-0 text-brand-yellow" />
+              <span className="truncate">
+                Fresh, hot &amp; cheesy — order your favourites today!
               </span>
-            )}
-          </button>
-
-          <Button
-            href="/menu"
-            variant="primary"
-            size="sm"
-            className="hidden sm:inline-flex"
-          >
-            Order Now
-          </Button>
-
-          <button
-            type="button"
-            aria-label="Toggle navigation menu"
-            onClick={() => setMobileOpen((v) => !v)}
-            className="grid h-10 w-10 place-items-center rounded-full text-brand-charcoal transition-colors hover:bg-black/5 md:hidden"
-          >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
-      </div>
-
-      {mobileOpen && (
-        <div className="animate-fade-in border-t border-black/5 bg-white md:hidden">
-          <nav
-            className="flex flex-col gap-1 px-4 py-4"
-            aria-label="Mobile"
-          >
-            {navLinks.map((link) => (
+            </p>
+            <div className="flex shrink-0 items-center gap-3">
               <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="rounded-xl px-4 py-3 text-base font-semibold text-brand-charcoal transition-colors hover:bg-brand-yellow/60"
+                href="/menu"
+                className="group inline-flex items-center gap-0.5 text-brand-yellow hover:text-brand-yellow-light"
               >
-                {link.label}
+                View Menu
+                <span className="transition-transform group-hover:translate-x-0.5">→</span>
               </Link>
-            ))}
+              <button
+                type="button"
+                aria-label="Dismiss announcement"
+                onClick={() => setAnnounceVisible(false)}
+                className="text-brand-gray hover:text-brand-cream"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <header
+        className={classNames(
+          "sticky top-0 z-50 border-b border-ink-line bg-ink-dark/80 backdrop-blur-xl transition-all duration-300",
+          scrolled ? "" : ""
+        )}
+      >
+        <div
+          className={classNames(
+            "mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 transition-all duration-300 sm:px-6 lg:px-8",
+            scrolled ? "h-14" : "h-[68px]"
+          )}
+        >
+          <BrandLogo />
+
+          <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
+            {navLinks.map((link) => {
+              const active = isActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={classNames(
+                    "group relative rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                    active
+                      ? "text-brand-yellow"
+                      : "text-brand-cream/70 hover:text-brand-cream"
+                  )}
+                >
+                  {link.label}
+                  <span
+                    className={classNames(
+                      "absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-brand-yellow transition-opacity",
+                      active ? "opacity-100" : "opacity-0 group-hover:opacity-40"
+                    )}
+                  />
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <Link
+              href="/menu?search="
+              aria-label="Search menu"
+              className="grid h-10 w-10 place-items-center rounded-full text-brand-cream/80 transition-colors hover:bg-white/5 hover:text-brand-cream"
+            >
+              <Search size={20} />
+            </Link>
+
+            <button
+              type="button"
+              onClick={openCart}
+              aria-label={`Open cart, ${cartCount} items`}
+              className="relative grid h-10 w-10 place-items-center rounded-full text-brand-cream/80 transition-colors hover:bg-white/5 hover:text-brand-cream"
+            >
+              <ShoppingBag size={20} />
+              {cartCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-brand-red px-1 text-[11px] font-bold text-white">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+
             <Button
               href="/menu"
               variant="primary"
-              size="full"
-              className="mt-2"
-              onClick={() => setMobileOpen(false)}
+              size="sm"
+              className="hidden sm:inline-flex"
             >
               Order Now
             </Button>
-          </nav>
+
+            <button
+              type="button"
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileOpen}
+              onClick={() => setMobileOpen((v) => !v)}
+              className="grid h-10 w-10 place-items-center rounded-full text-brand-cream transition-colors hover:bg-white/5 md:hidden"
+            >
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
-      )}
-    </header>
+
+        {mobileOpen && (
+          <div className="animate-fade-in border-t border-ink-line bg-ink-dark md:hidden">
+            <nav className="flex flex-col gap-1 px-4 py-4" aria-label="Mobile">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={classNames(
+                    "rounded-xl px-4 py-3 text-base font-semibold transition-colors",
+                    isActive(link.href)
+                      ? "bg-white/5 text-brand-yellow"
+                      : "text-brand-cream hover:bg-white/5"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <Button
+                href="/menu"
+                variant="primary"
+                size="full"
+                className="mt-2"
+                onClick={() => setMobileOpen(false)}
+              >
+                Order Now
+              </Button>
+              <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-3">
+                <OpenStatusPill />
+              </div>
+              <div className="mt-3 flex items-center gap-4 text-xs text-brand-cream/60">
+                <a href={cafeInfo.instagram} target="_blank" rel="noopener noreferrer">
+                  Instagram
+                </a>
+                <a href={cafeInfo.facebook} target="_blank" rel="noopener noreferrer">
+                  Facebook
+                </a>
+                <a href={cafeInfo.whatsapp} target="_blank" rel="noopener noreferrer">
+                  WhatsApp
+                </a>
+              </div>
+            </nav>
+          </div>
+        )}
+      </header>
+    </>
   );
 }

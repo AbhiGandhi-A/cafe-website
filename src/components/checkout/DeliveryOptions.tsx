@@ -1,7 +1,7 @@
 "use client";
 
-import { ShoppingBag, Bike } from "lucide-react";
-import { classNames } from "@/lib/utils";
+import { Store, Bike } from "lucide-react";
+import { classNames, formatPrice } from "@/lib/utils";
 import { storeConfig } from "@/data/cafe";
 
 export function DeliveryOptions({
@@ -13,34 +13,30 @@ export function DeliveryOptions({
   onChange: (v: "pickup" | "delivery") => void;
   subtotal: number;
 }) {
+  const deliveryFree = subtotal >= storeConfig.freeDeliveryAbove;
+
   const options = [
     {
       id: "pickup" as const,
-      icon: ShoppingBag,
+      icon: Store,
       title: "Pickup",
-      desc: "Collect your order from the cafe.",
+      desc: "Pick up from cafe",
       meta: "FREE",
-      metaTone: "text-green-700",
+      metaTone: "text-green-500",
     },
     {
       id: "delivery" as const,
       icon: Bike,
       title: "Delivery",
-      desc: "Get it delivered to your doorstep.",
-      meta:
-        subtotal >= storeConfig.freeDeliveryAbove
-          ? "FREE"
-          : `₹${storeConfig.deliveryFee}`,
-      metaTone:
-        subtotal >= storeConfig.freeDeliveryAbove
-          ? "text-green-700"
-          : "text-brand-gray",
+      desc: "Delivered to your address",
+      meta: deliveryFree ? "FREE" : `${formatPrice(storeConfig.deliveryFee)} or FREE above ${formatPrice(storeConfig.freeDeliveryAbove)}`,
+      metaTone: deliveryFree ? "text-green-500" : "text-brand-gray",
     },
   ];
 
   return (
-    <div className="rounded-3xl border border-brand-border bg-white p-6 shadow-card">
-      <h2 className="text-lg font-extrabold uppercase tracking-wide text-brand-charcoal">
+    <div className="card-dark p-6">
+      <h2 className="font-display text-lg font-extrabold uppercase tracking-wide text-brand-cream">
         Order Type
       </h2>
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -53,30 +49,26 @@ export function DeliveryOptions({
               onClick={() => onChange(id)}
               aria-pressed={selected}
               className={classNames(
-                "flex items-center gap-3 rounded-2xl border-2 p-4 text-left transition-all",
+                "flex items-center gap-3 rounded-2xl border p-4 text-left transition-all",
                 selected
-                  ? "border-brand-charcoal bg-brand-yellow/15"
-                  : "border-brand-border hover:border-brand-charcoal/40"
+                  ? "border-brand-yellow bg-brand-yellow/10"
+                  : "border-ink-line hover:border-white/30"
               )}
             >
               <span
                 className={classNames(
-                  "grid h-12 w-12 shrink-0 place-items-center rounded-2xl",
-                  selected
-                    ? "bg-brand-charcoal text-brand-yellow"
-                    : "bg-black/5 text-brand-charcoal"
+                  "grid h-12 w-12 shrink-0 place-items-center rounded-2xl transition-colors",
+                  selected ? "bg-brand-yellow text-ink-dark" : "bg-ink-charcoal text-brand-cream"
                 )}
               >
                 <Icon size={24} />
               </span>
               <span className="flex-1">
-                <span className="flex items-center gap-2 font-extrabold text-brand-charcoal">
-                  {title}
-                  <span className={classNames("text-xs font-bold", metaTone)}>
-                    {meta}
-                  </span>
-                </span>
+                <span className="block font-extrabold text-brand-cream">{title}</span>
                 <span className="text-sm text-brand-gray">{desc}</span>
+                <span className={classNames("mt-0.5 block text-xs font-bold", metaTone)}>
+                  {meta}
+                </span>
               </span>
             </button>
           );

@@ -10,6 +10,10 @@ export interface MenuItem {
   popular: boolean;
   vegetarian: boolean;
   rating: number;
+  available?: boolean;
+  spiceLevel?: "none" | "mild" | "medium" | "hot";
+  bestseller?: boolean;
+  newItem?: boolean;
 }
 
 const cdnBase =
@@ -275,6 +279,8 @@ export const menuItems: MenuItem[] = [
     popular: true,
     vegetarian: true,
     rating: 4.8,
+    bestseller: true,
+    spiceLevel: "mild",
   },
   {
     id: "peri-peri-paneer-sandwich",
@@ -310,6 +316,8 @@ export const menuItems: MenuItem[] = [
     popular: true,
     vegetarian: true,
     rating: 4.8,
+    bestseller: true,
+    spiceLevel: "medium",
   },
   {
     id: "veg-jain-grill-sandwich-sadi",
@@ -378,6 +386,8 @@ export const menuItems: MenuItem[] = [
     popular: true,
     vegetarian: true,
     rating: 4.7,
+    newItem: true,
+    bestseller: true,
   },
   {
     id: "onion-cheese-garlic-bread",
@@ -547,6 +557,8 @@ export const menuItems: MenuItem[] = [
     popular: true,
     vegetarian: true,
     rating: 4.8,
+    bestseller: true,
+    spiceLevel: "hot",
   },
   {
     id: "fried-momo-half",
@@ -582,6 +594,8 @@ export const menuItems: MenuItem[] = [
     popular: true,
     vegetarian: true,
     rating: 4.8,
+    bestseller: true,
+    spiceLevel: "mild",
   },
   {
     id: "butter-grill-momo-vada-pav",
@@ -593,6 +607,7 @@ export const menuItems: MenuItem[] = [
     popular: false,
     vegetarian: true,
     rating: 4.4,
+    available: false,
   },
   {
     id: "jumbo-vadapav",
@@ -650,6 +665,8 @@ export const menuItems: MenuItem[] = [
     popular: true,
     vegetarian: true,
     rating: 4.8,
+    bestseller: true,
+    newItem: true,
   },
 
   // DESSERT

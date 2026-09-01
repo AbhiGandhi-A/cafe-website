@@ -2,7 +2,7 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import Link from "next/link";
 import { classNames } from "@/lib/utils";
 
-type Variant = "primary" | "secondary" | "outline" | "dark" | "ghost";
+type Variant = "primary" | "secondary" | "outline" | "dark" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg" | "full";
 
 interface BaseProps {
@@ -15,13 +15,13 @@ interface BaseProps {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-brand-yellow text-brand-charcoal hover:bg-brand-yellow-light hover:-translate-y-0.5 shadow-soft",
-  secondary:
-    "bg-brand-charcoal text-brand-cream hover:bg-brand-dark hover:-translate-y-0.5 shadow-soft",
+    "bg-brand-yellow text-ink-dark hover:bg-brand-yellow-light shadow-glow hover:-translate-y-0.5",
+  secondary: "bg-ink-card text-brand-cream hover:bg-ink-card2 hover:-translate-y-0.5 border border-ink-line",
   outline:
-    "border-2 border-brand-charcoal text-brand-charcoal bg-transparent hover:bg-brand-charcoal hover:text-brand-cream",
-  dark: "bg-brand-dark text-brand-yellow hover:bg-brand-charcoal hover:-translate-y-0.5",
-  ghost: "bg-transparent text-brand-charcoal hover:bg-black/5",
+    "border border-white/25 text-brand-cream bg-transparent hover:bg-white/10 hover:border-white/40",
+  dark: "bg-ink-dark text-brand-yellow hover:bg-ink-card border border-ink-line hover:-translate-y-0.5",
+  ghost: "bg-transparent text-brand-cream hover:bg-white/5",
+  danger: "bg-brand-red text-white hover:bg-brand-red-dark hover:-translate-y-0.5",
 };
 
 const sizeClasses: Record<Size, string> = {
