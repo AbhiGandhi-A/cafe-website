@@ -17,7 +17,7 @@ export default function FavoritesPage() {
   const items = menuItems.filter((i) => favorites.includes(i.id));
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:py-14">
+    <div className="mx-auto max-w-[1480px] px-4 sm:px-8 lg:px-12 py-10 sm:px-6 lg:py-14">
       <div className="text-center">
         <p className="text-sm font-bold uppercase tracking-widest text-brand-yellow">
           <Heart size={15} className="mr-1 inline" /> Saved

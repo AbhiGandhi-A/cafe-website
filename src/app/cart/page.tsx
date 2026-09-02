@@ -84,7 +84,7 @@ export default function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1480px] px-4 sm:px-8 lg:px-12 py-14 sm:px-6 lg:px-8">
         <div className="mb-8 text-center">
           <h1 className="font-display text-3xl font-black uppercase text-brand-cream sm:text-4xl">
             Your Cart
@@ -112,7 +112,7 @@ export default function CartPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-[1480px] px-4 sm:px-8 lg:px-12 py-10 sm:px-6 lg:px-8">
       <div className="mb-6 text-center">
         <p className="text-sm font-bold uppercase tracking-wider text-brand-yellow">
           Review your order

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Sparkles, Utensils, ShoppingBag, Bike } from "lucide-react";
+import { Sparkles, Utensils, ShoppingBag, Bike, ArrowRight } from "lucide-react";
 import { images } from "@/data/menu";
 
 const serviceModes = [
@@ -25,11 +25,11 @@ const serviceModes = [
 
 export function CTASection() {
   return (
-    <section className="relative overflow-hidden bg-ink-dark py-12 sm:py-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[2.5rem] border border-brand-yellow/30 bg-gradient-to-r from-ink-card via-ink-charcoal to-ink-card p-6 shadow-lift sm:p-10 lg:p-12">
+    <section className="relative overflow-hidden bg-[#090909] py-12 sm:py-16 text-white">
+      <div className="mx-auto max-w-[1480px] px-4 sm:px-8 lg:px-12">
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-brand-yellow/30 bg-gradient-to-r from-[#141414] via-[#1a1a1a] to-[#141414] p-6 shadow-lift sm:p-10 lg:p-12">
           {/* Background dots & glow */}
-          <div className="absolute inset-0 brand-dots opacity-20" aria-hidden />
+          <div className="absolute inset-0 brand-dots opacity-20 pointer-events-none" aria-hidden />
           <div className="pointer-events-none absolute -left-10 -top-10 h-48 w-48 rounded-full bg-brand-yellow/15 blur-3xl" />
           <div className="pointer-events-none absolute -right-10 -bottom-10 h-48 w-48 rounded-full bg-brand-red/15 blur-3xl" />
 
@@ -39,7 +39,7 @@ export function CTASection() {
               <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-brand-yellow">
                 <Sparkles size={14} className="text-brand-yellow" /> Special Offers
               </div>
-              <h2 className="font-display mt-2 text-2xl font-black uppercase leading-tight text-brand-cream sm:text-3xl lg:text-4xl">
+              <h2 className="font-display mt-2 text-2xl font-black uppercase leading-tight text-white sm:text-3xl lg:text-4xl">
                 &amp; Combo Deals
               </h2>
               <p className="mt-2 text-sm text-brand-gray">
@@ -48,17 +48,17 @@ export function CTASection() {
               <div className="mt-6">
                 <Link
                   href="/menu"
-                  className="group inline-flex items-center gap-2 rounded-full bg-brand-yellow px-6 py-3 text-sm font-black text-ink-dark shadow-soft transition-all hover:bg-brand-yellow-light hover:shadow-glow active:scale-95"
+                  className="group inline-flex items-center gap-2 rounded-full bg-brand-yellow px-6 py-3.5 text-sm font-black text-[#090909] shadow-soft transition-all hover:bg-brand-yellow-light hover:shadow-glow active:scale-95"
                 >
                   View Offers
-                  <span className="transition-transform group-hover:translate-x-1">?</span>
+                  <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>
 
             {/* Center Column: Combo Burger & Drink Image + 99 Badge */}
             <div className="relative mx-auto flex w-full max-w-sm items-center justify-center">
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/10">
                 <Image
                   src={images.burger}
                   alt="Crazy Cheesy Cafe burger combo deal"
@@ -69,11 +69,11 @@ export function CTASection() {
               </div>
 
               {/* Combo starts at ?99 Seal */}
-              <div className="absolute -top-3 -right-2 grid h-20 w-20 place-items-center rounded-full border-2 border-dashed border-ink-dark bg-brand-yellow text-center font-black text-ink-dark shadow-lift sm:h-22 sm:w-22">
+              <div className="absolute -top-3 -right-2 grid h-20 w-20 place-items-center rounded-full border-2 border-dashed border-[#090909] bg-brand-yellow text-center font-black text-[#090909] shadow-lift sm:h-22 sm:w-22">
                 <div className="leading-tight">
                   <span className="block text-[9px] font-black uppercase">COMBO</span>
                   <span className="block text-[10px] font-bold">STARTS AT</span>
-                  <span className="block text-base font-black">?99</span>
+                  <span className="block text-base font-black">&#8377;99</span>
                 </div>
               </div>
             </div>
@@ -89,7 +89,7 @@ export function CTASection() {
                     <Icon size={20} />
                   </span>
                   <div className="min-w-0">
-                    <p className="truncate text-xs font-black uppercase text-brand-cream sm:text-sm">
+                    <p className="truncate text-xs font-black uppercase text-white sm:text-sm">
                       {title}
                     </p>
                     <p className="truncate text-[11px] font-medium text-brand-gray">

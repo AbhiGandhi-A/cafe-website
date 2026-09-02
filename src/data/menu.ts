@@ -16,8 +16,6 @@ export interface MenuItem {
   newItem?: boolean;
 }
 
-const cdnBase =
-  "https://images.unsplash.com/photo-";
 
 export const images = {
   placeholder: "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=800&q=80",

@@ -29,15 +29,15 @@ export function Reviews() {
   const [activeDot, setActiveDot] = useState(0);
 
   return (
-    <section className="relative overflow-hidden bg-ink-dark py-14 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden bg-[#FAF8F5] py-14 sm:py-20 text-[#111111]">
+      <div className="mx-auto max-w-[1480px] px-4 sm:px-8 lg:px-12">
         {/* Header */}
         <div className="text-center">
-          <h2 className="font-display text-3xl font-black uppercase text-brand-cream sm:text-4xl lg:text-5xl">
-            What Our <span className="font-sans italic text-brand-yellow">Cheese Lovers</span> Say
+          <h2 className="font-display text-3xl font-black uppercase text-[#111111] sm:text-4xl lg:text-5xl">
+            What Our <span className="font-sans italic text-[#D97706]">Cheese Lovers</span> Say
           </h2>
-          <p className="mt-2 text-sm text-brand-gray sm:text-base">
-            Real cravings. Real happiness. Here's what our customers have to say.
+          <p className="mt-2 text-sm font-semibold text-[#6B7280] sm:text-base">
+            Real cravings. Real happiness. Here&apos;s what our cheese lovers have to say.
           </p>
         </div>
 
@@ -46,11 +46,11 @@ export function Reviews() {
           {reviews.map((r) => (
             <div
               key={r.name}
-              className="relative flex flex-col justify-between rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-card backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-brand-yellow/40 hover:bg-white/[0.07]"
+              className="relative flex flex-col justify-between rounded-3xl border border-black/8 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#FFC928] hover:shadow-card"
             >
               {/* Quote icon on top */}
               <div className="mb-4 flex items-center justify-between">
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-yellow/15 text-brand-yellow">
+                <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#FFC928]/20 text-[#B45309]">
                   <Quote size={18} className="rotate-180" />
                 </span>
                 <div className="flex gap-1">
@@ -58,31 +58,31 @@ export function Reviews() {
                     <Star
                       key={i}
                       size={16}
-                      className="fill-brand-yellow text-brand-yellow"
+                      className="fill-[#FFC928] text-[#FFC928]"
                     />
                   ))}
                 </div>
               </div>
 
               {/* Review Text */}
-              <p className="text-sm font-medium leading-relaxed text-brand-cream/90">
-                ?{r.quote}?
+              <p className="text-sm font-medium leading-relaxed text-[#374151]">
+                &ldquo;{r.quote}&rdquo;
               </p>
 
               {/* User Avatar & Name */}
-              <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-4">
-                <div className="relative h-10 w-10 overflow-hidden rounded-full border border-brand-yellow/40">
+              <div className="mt-6 flex items-center gap-3 border-t border-black/5 pt-4">
+                <div className="relative h-11 w-11 overflow-hidden rounded-full border border-[#FFC928]">
                   <Image
                     src={r.avatar}
                     alt={r.name}
                     fill
-                    sizes="40px"
+                    sizes="44px"
                     className="object-cover"
                   />
                 </div>
                 <div>
-                  <p className="font-display text-sm font-extrabold text-brand-cream">{r.name}</p>
-                  <p className="text-[11px] font-semibold text-brand-yellow">Verified Customer</p>
+                  <p className="font-display text-sm font-extrabold text-[#111111]">{r.name}</p>
+                  <p className="text-[11px] font-bold text-[#B45309]">Verified Cheese Lover</p>
                 </div>
               </div>
             </div>
@@ -90,11 +90,11 @@ export function Reviews() {
 
           {/* Happy Customers Sticker */}
           <div className="absolute -right-4 -top-8 hidden xl:block">
-            <div className="flex items-center gap-2 rounded-2xl border border-brand-yellow/30 bg-ink-card p-3 shadow-lift">
-              <Smile size={24} className="text-brand-yellow" />
+            <div className="flex items-center gap-2.5 rounded-2xl border border-black/10 bg-white p-3.5 shadow-lift">
+              <Smile size={24} className="text-[#D97706]" />
               <div className="leading-tight">
-                <p className="text-[11px] font-black uppercase text-brand-cream">Happy Customers</p>
-                <p className="text-[10px] font-bold text-brand-yellow">Happier Us! ??</p>
+                <p className="text-[11px] font-black uppercase text-[#111111]">Happy Customers</p>
+                <p className="text-[10px] font-bold text-[#D97706]">Happier Us! &#128522;</p>
               </div>
             </div>
           </div>
@@ -109,7 +109,7 @@ export function Reviews() {
               aria-label={`Go to slide ${idx + 1}`}
               onClick={() => setActiveDot(idx)}
               className={`h-2.5 rounded-full transition-all ${
-                activeDot === idx ? "w-8 bg-brand-yellow" : "w-2.5 bg-white/20 hover:bg-white/40"
+                activeDot === idx ? "w-8 bg-[#FFC928]" : "w-2.5 bg-black/20 hover:bg-black/40"
               }`}
             />
           ))}

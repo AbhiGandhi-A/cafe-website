@@ -33,16 +33,19 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const [values, setValues] = useState<Record<string, string>>({
-    name: "",
-    phone: "",
-    email: "",
-    address: "",
-    landmark: "",
-    city: "",
-    pincode: "",
-    deliveryInstructions: "",
-    orderNotes: "",
+  const [values, setValues] = useState<Record<string, string>>(() => {
+    const saved = getCustomerDetails();
+    return {
+      name: saved?.name ?? "",
+      phone: saved?.phone ?? "",
+      email: saved?.email ?? "",
+      address: saved?.address ?? "",
+      landmark: saved?.landmark ?? "",
+      city: saved?.city ?? "",
+      pincode: saved?.pincode ?? "",
+      deliveryInstructions: "",
+      orderNotes: "",
+    };
   });
   const [errors, setErrors] = useState<FieldError>({});
   const [orderType, setOrderType] = useState<"pickup" | "delivery">("pickup");
@@ -57,7 +60,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     const saved = getCustomerDetails();
     if (saved && Object.keys(saved).length > 0) {
-      setValues((prev) => ({ ...prev, ...saved }));
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRemember(true);
     }
   }, []);
@@ -179,7 +182,7 @@ export default function CheckoutPage() {
 
   if (cart.length === 0 && !orderPlaced) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1480px] px-4 sm:px-8 lg:px-12 py-16 text-center sm:px-6 lg:px-8">
         <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-brand-yellow/10 text-brand-yellow">
           <CheckCircle2 size={44} />
         </div>
@@ -195,7 +198,7 @@ export default function CheckoutPage() {
   const canOrder = !minimumNotMet && !processing;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-[1480px] px-4 sm:px-8 lg:px-12 py-10 sm:px-6 lg:px-8">
       <div className="mb-8 text-center">
         <p className="text-sm font-bold uppercase tracking-wider text-brand-yellow">Almost there</p>
         <h1 className="font-display mt-1 text-3xl font-black uppercase text-brand-cream sm:text-4xl">

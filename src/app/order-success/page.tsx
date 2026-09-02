@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, Home, MapPin, PackageCheck, Phone, RefreshCw, Truck } from "lucide-react";
+import { CheckCircle2, Home, MapPin, PackageCheck, RefreshCw, Truck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { getItemById } from "@/data/menu";
-import { cafeInfo, orderTimings } from "@/data/cafe";
+import { orderTimings } from "@/data/cafe";
 import { formatPrice } from "@/lib/utils";
 import { getOrderById, getLastOrder, type SavedOrder } from "@/lib/orders";
 import { useCart } from "@/context/CartContext";
@@ -29,6 +29,7 @@ export default function OrderSuccessPage() {
     if (!o) {
       o = getLastOrder();
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOrder(o ?? null);
     setLoaded(true);
   }, [orderIdParam]);

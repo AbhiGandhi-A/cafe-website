@@ -1,19 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Phone, Clock, Star, Navigation, ExternalLink, Utensils } from "lucide-react";
+import { MapPin, Phone, Clock, Star, Navigation, ExternalLink, Utensils, ArrowRight } from "lucide-react";
 import { cafeInfo } from "@/data/cafe";
 
 export function StoreLocator() {
   return (
-    <section id="store-locator" className="relative scroll-mt-20 overflow-hidden bg-ink-dark py-14 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="store-locator" className="relative scroll-mt-20 overflow-hidden bg-[#FAF8F5] py-14 sm:py-20 text-[#111111]">
+      <div className="mx-auto max-w-[1480px] px-4 sm:px-8 lg:px-12">
         {/* Section Heading */}
         <div className="text-center sm:text-left">
-          <h2 className="font-display text-3xl font-black uppercase text-brand-cream sm:text-4xl lg:text-5xl">
-            Visit Our <span className="font-sans italic text-brand-yellow">Cafe</span>
+          <h2 className="font-display text-3xl font-black uppercase text-[#111111] sm:text-4xl lg:text-5xl">
+            Visit Our <span className="font-sans italic text-[#D97706]">Cafe</span>
           </h2>
-          <p className="mt-2 text-sm font-medium text-brand-gray sm:text-base">
+          <p className="mt-2 text-sm font-semibold text-[#6B7280] sm:text-base">
             Come for the food, stay for the vibe.
           </p>
         </div>
@@ -24,18 +24,18 @@ export function StoreLocator() {
           <div className="flex flex-col justify-between gap-4">
             <div className="space-y-4">
               {/* Location Card */}
-              <div className="flex items-start gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-md transition-all hover:border-brand-yellow/40 hover:bg-white/[0.07]">
-                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand-yellow text-ink-dark shadow-soft">
+              <div className="flex items-start gap-4 rounded-3xl border border-black/8 bg-white p-5 shadow-sm transition-all hover:border-[#FFC928] hover:shadow-card">
+                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#FFC928] text-[#090909] shadow-sm">
                   <MapPin size={24} />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-black uppercase tracking-wider text-brand-yellow">
+                  <p className="text-xs font-black uppercase tracking-wider text-[#B45309]">
                     Location
                   </p>
-                  <p className="mt-1 text-sm font-bold leading-snug text-brand-cream">
+                  <p className="mt-1 text-sm font-bold leading-snug text-[#111111]">
                     {cafeInfo.addressLine}
                   </p>
-                  <p className="mt-1 text-xs text-brand-gray">
+                  <p className="mt-1 text-xs text-[#6B7280]">
                     {cafeInfo.landmark}, {cafeInfo.city}, {cafeInfo.state} - {cafeInfo.pincode}
                   </p>
                 </div>
@@ -46,34 +46,34 @@ export function StoreLocator() {
                 {/* Call Us */}
                 <a
                   href={`tel:${cafeInfo.phone}`}
-                  className="group flex items-start gap-3.5 rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-md transition-all hover:border-brand-yellow/40 hover:bg-white/[0.07]"
+                  className="group flex items-start gap-3.5 rounded-3xl border border-black/8 bg-white p-5 shadow-sm transition-all hover:border-[#FFC928] hover:shadow-card"
                 >
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand-yellow/15 text-brand-yellow transition-transform group-hover:scale-105">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#FFC928]/20 text-[#B45309] transition-transform group-hover:scale-105">
                     <Phone size={22} />
                   </span>
                   <div>
-                    <p className="text-xs font-black uppercase tracking-wider text-brand-gray">
+                    <p className="text-xs font-black uppercase tracking-wider text-[#6B7280]">
                       Call Us
                     </p>
-                    <p className="mt-1 text-sm font-black text-brand-cream group-hover:text-brand-yellow">
+                    <p className="mt-1 text-sm font-black text-[#111111] group-hover:text-[#B45309]">
                       {cafeInfo.phoneFormatted}
                     </p>
                   </div>
                 </a>
 
                 {/* Opening Hours */}
-                <div className="flex items-start gap-3.5 rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-md transition-all hover:border-brand-yellow/40 hover:bg-white/[0.07]">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand-yellow/15 text-brand-yellow">
+                <div className="flex items-start gap-3.5 rounded-3xl border border-black/8 bg-white p-5 shadow-sm transition-all hover:border-[#FFC928] hover:shadow-card">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#FFC928]/20 text-[#B45309]">
                     <Clock size={22} />
                   </span>
                   <div>
-                    <p className="text-xs font-black uppercase tracking-wider text-brand-gray">
+                    <p className="text-xs font-black uppercase tracking-wider text-[#6B7280]">
                       Opening Hours
                     </p>
-                    <p className="mt-1 text-xs font-bold text-brand-cream">
+                    <p className="mt-1 text-xs font-bold text-[#111111]">
                       {cafeInfo.hoursDetail}
                     </p>
-                    <span className="mt-1 inline-block rounded-full bg-green-500/20 px-2 py-0.5 text-[10px] font-black text-green-400">
+                    <span className="mt-1.5 inline-block rounded-full bg-green-500/15 px-2.5 py-0.5 text-[10px] font-black text-green-700">
                       {cafeInfo.timingDisplay}
                     </span>
                   </div>
@@ -81,23 +81,23 @@ export function StoreLocator() {
               </div>
 
               {/* Rating Card */}
-              <div className="flex items-center justify-between rounded-3xl border border-brand-yellow/30 bg-gradient-to-r from-brand-yellow/15 via-brand-yellow/5 to-transparent p-4">
-                <div className="flex items-center gap-2.5">
-                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-yellow text-ink-dark">
-                    <Star size={20} className="fill-ink-dark" />
+              <div className="flex items-center justify-between rounded-3xl border border-black/8 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#FFC928] text-[#090909]">
+                    <Star size={20} className="fill-[#090909]" />
                   </span>
                   <div>
-                    <p className="text-sm font-black text-brand-cream">
+                    <p className="text-sm font-black text-[#111111]">
                       {cafeInfo.rating} Rating on Google
                     </p>
-                    <p className="text-xs text-brand-gray">
+                    <p className="text-xs font-semibold text-[#6B7280]">
                       Based on {cafeInfo.reviewsCount} Customer Reviews
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-0.5 text-brand-yellow">
+                <div className="flex gap-1 text-[#FFC928]">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={15} className="fill-brand-yellow" />
+                    <Star key={i} size={16} className="fill-[#FFC928]" />
                   ))}
                 </div>
               </div>
@@ -109,32 +109,32 @@ export function StoreLocator() {
                 href={cafeInfo.mapDirectionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 rounded-full bg-brand-yellow px-7 py-3.5 text-sm font-black text-ink-dark shadow-glow transition-all hover:bg-brand-yellow-light hover:shadow-lift active:scale-95"
+                className="group inline-flex items-center gap-2 rounded-full bg-brand-yellow px-7 py-3.5 text-sm font-black text-[#090909] shadow-soft transition-all hover:bg-brand-yellow-light hover:shadow-lift active:scale-95"
               >
                 <Navigation size={18} />
                 Get Directions
-                <span className="transition-transform group-hover:translate-x-1">?</span>
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </a>
 
               <Link
                 href="/menu"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-bold text-brand-cream transition-all hover:border-brand-yellow hover:bg-white/10 active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-white px-6 py-3.5 text-sm font-bold text-[#111111] shadow-sm transition-all hover:border-[#FFC928] hover:bg-[#F9F9F9] active:scale-95"
               >
-                <Utensils size={16} className="text-brand-yellow" />
+                <Utensils size={16} className="text-[#B45309]" />
                 View Menu
               </Link>
             </div>
           </div>
 
           {/* Right Column: Styled Interactive Map Box */}
-          <div className="relative min-h-[380px] overflow-hidden rounded-[2.5rem] border border-white/15 bg-ink-card shadow-lift">
+          <div className="relative min-h-[380px] overflow-hidden rounded-[2.5rem] border border-black/10 bg-white shadow-lift">
             {/* Embedded Google Map iframe focused on Ankleshwar */}
             <iframe
               title="Crazy Cheesy Cafe Ankleshwar Map"
               src={`https://maps.google.com/maps?q=${encodeURIComponent(
                 "Crazy Cheesy Cafe Signature Galleria Ankleshwar Gujarat 393001"
               )}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
-              className="h-full w-full border-0 grayscale-[20%] contrast-[1.05] filter"
+              className="h-full w-full border-0 grayscale-[15%] contrast-[1.05]"
               loading="lazy"
               allowFullScreen
             />
@@ -145,17 +145,17 @@ export function StoreLocator() {
                 href={cafeInfo.mapDirectionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-3 rounded-2xl border border-brand-yellow/40 bg-ink-dark/95 p-3.5 shadow-lift backdrop-blur-md transition-all hover:border-brand-yellow hover:bg-ink-dark"
+                className="group flex items-center gap-3 rounded-2xl border border-brand-yellow/50 bg-[#090909]/95 p-3.5 shadow-lift backdrop-blur-md transition-all hover:border-brand-yellow hover:bg-[#090909]"
               >
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-yellow text-ink-dark shadow-soft">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-yellow text-[#090909] shadow-soft">
                   <MapPin size={20} />
                 </span>
                 <div className="min-w-0 pr-2">
                   <p className="truncate text-xs font-black uppercase tracking-wider text-brand-yellow">
                     Crazy Cheesy Cafe
                   </p>
-                  <p className="truncate text-[11px] font-semibold text-brand-cream/90">
-                    Signature Galleria ? Ankleshwar
+                  <p className="truncate text-[11px] font-semibold text-white/90">
+                    Signature Galleria &middot; Ankleshwar
                   </p>
                 </div>
                 <ExternalLink size={15} className="shrink-0 text-brand-gray transition-colors group-hover:text-brand-yellow" />

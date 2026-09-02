@@ -1,25 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-yellow: #ffd21f;
-  --color-brand-yellow-light: #ffe75e;
+  --color-brand-yellow: #FFC928;
+  --color-brand-yellow-light: #FFD83D;
   --color-brand-red: #ff4d2e;
   --color-brand-red-dark: #e63946;
 
-  --color-ink-charcoal: #151515;
-  --color-ink-dark: #0b0b0b;
-  --color-ink-card: #1a1a1a;
-  --color-ink-card2: #202020;
-  --color-ink-line: rgba(255, 255, 255, 0.08);
+  --color-ink-charcoal: #171717;
+  --color-ink-dark: #090909;
+  --color-ink-surface: #111111;
+  --color-ink-card: #141414;
+  --color-ink-card2: #1c1c1c;
+  --color-ink-line: rgba(255, 255, 255, 0.10);
 
-  --color-brand-cream: #f7f3ea;
-  --color-brand-gray: #9a9a9a;
+  --color-brand-cream: #FFFFFF;
+  --color-brand-gray: #A7A7A7;
 
-  /* backwards-compatible aliases mapped to the dark palette */
-  --color-brand-charcoal: #e9e5db;
-  --color-brand-dark: #0b0b0b;
-  --color-brand-black: #0a0a0a;
-  --color-brand-border: rgba(255, 255, 255, 0.1);
+  /* light section colors */
+  --color-light-bg: #F7F7F7;
+  --color-light-card: #FFFFFF;
+  --color-light-text: #111111;
+  --color-light-muted: #6B7280;
+  --color-light-border: rgba(0, 0, 0, 0.08);
 
   --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
@@ -27,7 +29,7 @@
   --shadow-soft: 0 10px 30px -12px rgba(0, 0, 0, 0.5);
   --shadow-card: 0 6px 24px -10px rgba(0, 0, 0, 0.55);
   --shadow-lift: 0 24px 50px -20px rgba(0, 0, 0, 0.7);
-  --shadow-glow: 0 0 40px -8px rgba(255, 210, 31, 0.35);
+  --shadow-glow: 0 0 40px -8px rgba(255, 201, 40, 0.35);
 
   --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-fade-in: fade-in 0.5s ease-out both;
@@ -36,7 +38,6 @@
   --animate-toast-in: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-drawer-in: drawer-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-overlay-in: overlay-in 0.3s ease-out both;
-  --animate-shimmer: shimmer 1.5s linear infinite;
 
   @keyframes fade-up {
     from {
@@ -101,24 +102,16 @@
       opacity: 1;
     }
   }
-  @keyframes shimmer {
-    from {
-      background-position: 200% 0;
-    }
-    to {
-      background-position: -200% 0;
-    }
-  }
 }
 
 :root {
-  --background: #0b0b0b;
-  --foreground: #f7f3ea;
+  --background: #090909;
+  --foreground: #FFFFFF;
 }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 6rem;
+  scroll-padding-top: 5.5rem;
 }
 
 body {
@@ -145,44 +138,43 @@ body {
 
 .brand-dots {
   background-image: radial-gradient(
-    rgba(255, 255, 255, 0.07) 1px,
+    rgba(255, 255, 255, 0.08) 1px,
     transparent 1px
   );
-  background-size: 22px 22px;
+  background-size: 24px 24px;
 }
 
 .text-shadow-brand {
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
 }
 
-.gradient-text {
-  background: linear-gradient(92deg, #ffd21f, #ff9d2e);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Standardised surfaces */
 .card-dark {
-  background: var(--color-ink-card);
-  border: 1px solid var(--color-ink-line);
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 1.5rem;
   box-shadow: var(--shadow-card);
+}
+
+.card-light {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.06);
 }
 
 .input-dark {
   width: 100%;
   border-radius: 0.9rem;
-  border: 1.5px solid var(--color-ink-line);
-  background: var(--color-ink-charcoal);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  background: #171717;
   padding: 0.75rem 1rem;
-  color: var(--color-brand-cream);
+  color: #FFFFFF;
   transition: border-color 0.2s;
 }
 .input-dark::placeholder {
-  color: var(--color-brand-gray);
+  color: #A7A7A7;
 }
 .input-dark:focus {
   outline: none;
-  border-color: var(--color-brand-yellow);
+  border-color: #FFC928;
 }

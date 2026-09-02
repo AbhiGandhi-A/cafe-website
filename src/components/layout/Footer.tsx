@@ -15,6 +15,7 @@ import {
 import { BrandLogo } from "./BrandLogo";
 import { cafeInfo } from "@/data/cafe";
 import { categories } from "@/data/categories";
+import { useToast } from "@/components/ui/Toast";
 
 const quickLinks = [
   { href: "/", label: "Home" },
@@ -28,23 +29,25 @@ const quickLinks = [
 export function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const { toast } = useToast();
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
     setSubscribed(true);
     setEmail("");
+    toast("Thanks! You're on the demo list.");
     setTimeout(() => setSubscribed(false), 4000);
   };
 
   return (
-    <footer id="contact" className="relative border-t border-white/10 bg-ink-dark text-brand-cream">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+    <footer id="contact" className="relative border-t border-white/10 bg-[#090909] text-white">
+      <div className="mx-auto max-w-[1480px] px-4 py-14 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.9fr_0.9fr_1.1fr_1.4fr] lg:gap-8">
           {/* Col 1: Brand Info */}
           <div>
             <BrandLogo light />
-            <p className="mt-4 max-w-xs text-xs font-medium leading-relaxed text-brand-cream/70 sm:text-sm">
+            <p className="mt-4 max-w-xs text-xs font-medium leading-relaxed text-white/70 sm:text-sm">
               Loaded with flavour. Made with love. Your go-to destination for cheesy cravings.
             </p>
             <div className="mt-5 flex gap-2">
@@ -59,7 +62,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-brand-cream transition-all hover:bg-brand-yellow hover:text-ink-dark"
+                  className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-white transition-all hover:bg-brand-yellow hover:text-[#090909]"
                 >
                   <Icon size={16} />
                 </a>
@@ -77,7 +80,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-xs font-semibold text-brand-cream/70 transition-colors hover:text-brand-yellow sm:text-sm"
+                    className="text-xs font-semibold text-white/70 transition-colors hover:text-brand-yellow sm:text-sm"
                   >
                     {link.label}
                   </Link>
@@ -96,7 +99,7 @@ export function Footer() {
                 <li key={cat.id}>
                   <Link
                     href={`/menu?category=${cat.id}`}
-                    className="text-xs font-semibold text-brand-cream/70 transition-colors hover:text-brand-yellow sm:text-sm"
+                    className="text-xs font-semibold text-white/70 transition-colors hover:text-brand-yellow sm:text-sm"
                   >
                     {cat.name}
                   </Link>
@@ -110,7 +113,7 @@ export function Footer() {
             <h3 className="font-display text-xs font-black uppercase tracking-widest text-brand-yellow">
               Get In Touch
             </h3>
-            <ul className="mt-4 space-y-3 text-xs text-brand-cream/70 sm:text-sm">
+            <ul className="mt-4 space-y-3 text-xs text-white/70 sm:text-sm">
               <li className="flex items-center gap-2.5">
                 <Phone size={15} className="shrink-0 text-brand-yellow" />
                 <a href={`tel:${cafeInfo.phone}`} className="hover:text-brand-yellow">
@@ -145,13 +148,13 @@ export function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email address"
-                  className="w-full rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-brand-cream placeholder:text-brand-gray focus:border-brand-yellow focus:outline-none"
+                  className="w-full rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder:text-brand-gray focus:border-brand-yellow focus:outline-none"
                   required
                 />
               </div>
               <button
                 type="submit"
-                className="flex items-center justify-center gap-1.5 rounded-full bg-brand-yellow px-4 py-2.5 text-xs font-black text-ink-dark transition-all hover:bg-brand-yellow-light active:scale-95"
+                className="flex items-center justify-center gap-1.5 rounded-full bg-brand-yellow px-4 py-2.5 text-xs font-black text-[#090909] transition-all hover:bg-brand-yellow-light active:scale-95"
               >
                 {subscribed ? (
                   <>
@@ -168,19 +171,19 @@ export function Footer() {
         </div>
 
         {/* Bottom copyright bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-center text-xs text-brand-cream/60 sm:flex-row sm:text-left">
-          <p>? 2026 Crazy Cheesy Cafe. All rights reserved.</p>
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-center text-xs text-white/60 sm:flex-row sm:text-left">
+          <p>&copy; 2026 Crazy Cheesy Cafe. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link href="/menu" className="hover:text-brand-yellow">
               Privacy Policy
             </Link>
-            <span>?</span>
+            <span>&middot;</span>
             <Link href="/menu" className="hover:text-brand-yellow">
               Terms &amp; Conditions
             </Link>
           </div>
           <p className="flex items-center gap-1 font-bold text-brand-yellow">
-            Stay Cheesy! ??
+            Stay Cheesy! &#129472;
           </p>
         </div>
       </div>
