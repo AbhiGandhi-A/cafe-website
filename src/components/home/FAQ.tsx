@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { classNames } from "@/lib/utils";
 
 const faqs = [
@@ -38,19 +39,19 @@ export function FAQ() {
   return (
     <section className="py-16 sm:py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          label="FAQs"
-          title="Good To Know"
-          description="Quick answers to your ordering questions."
-        />
+        <ScrollReveal direction="up" duration={600}>
+          <SectionHeading
+            label="FAQs"
+            title="Good To Know"
+            description="Quick answers to your ordering questions."
+          />
+        </ScrollReveal>
         <div className="space-y-3">
           {faqs.map((f, i) => {
             const isOpen = open === i;
             return (
-              <div
-                key={f.q}
-                className="overflow-hidden rounded-2xl border border-ink-line bg-ink-card"
-              >
+              <ScrollReveal key={f.q} direction="up" delay={i * 70} duration={550}>
+                <div className="overflow-hidden rounded-2xl border border-ink-line bg-ink-card">
                 <button
                   type="button"
                   onClick={() => setOpen(isOpen ? null : i)}
@@ -71,7 +72,8 @@ export function FAQ() {
                     {f.a}
                   </div>
                 )}
-              </div>
+                </div>
+              </ScrollReveal>
             );
           })}
         </div>
