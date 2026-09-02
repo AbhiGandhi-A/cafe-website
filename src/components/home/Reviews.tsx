@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Star, Quote, Smile } from "lucide-react";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const reviews = [
   {
@@ -32,60 +33,61 @@ export function Reviews() {
     <section className="relative overflow-hidden bg-[#FAF8F5] py-14 sm:py-20 text-[#111111]">
       <div className="mx-auto max-w-[1480px] px-4 sm:px-8 lg:px-12">
         {/* Header */}
-        <div className="text-center">
-          <h2 className="font-display text-3xl font-black uppercase text-[#111111] sm:text-4xl lg:text-5xl">
-            What Our <span className="font-sans italic text-[#D97706]">Cheese Lovers</span> Say
-          </h2>
-          <p className="mt-2 text-sm font-semibold text-[#6B7280] sm:text-base">
-            Real cravings. Real happiness. Here&apos;s what our cheese lovers have to say.
-          </p>
-        </div>
+        <ScrollReveal direction="up" duration={600}>
+          <div className="text-center">
+            <h2 className="font-display text-3xl font-black uppercase text-[#111111] sm:text-4xl lg:text-5xl">
+              What Our <span className="font-sans italic text-[#D97706]">Cheese Lovers</span> Say
+            </h2>
+            <p className="mt-2 text-sm font-semibold text-[#6B7280] sm:text-base">
+              Real cravings. Real happiness. Here&apos;s what our cheese lovers have to say.
+            </p>
+          </div>
+        </ScrollReveal>
 
         {/* Reviews Grid */}
         <div className="relative mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
-          {reviews.map((r) => (
-            <div
-              key={r.name}
-              className="relative flex flex-col justify-between rounded-3xl border border-black/8 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#FFC928] hover:shadow-card"
-            >
-              {/* Quote icon on top */}
-              <div className="mb-4 flex items-center justify-between">
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#FFC928]/20 text-[#B45309]">
-                  <Quote size={18} className="rotate-180" />
-                </span>
-                <div className="flex gap-1">
-                  {Array.from({ length: r.rating }).map((_, i) => (
-                    <Star
-                      key={i}
-                      size={16}
-                      className="fill-[#FFC928] text-[#FFC928]"
+          {reviews.map((r, i) => (
+            <ScrollReveal key={r.name} direction={i === 0 ? "left" : i === 1 ? "up" : "right"} delay={i * 120} duration={600}>
+              <div className="relative flex h-full flex-col justify-between rounded-3xl border border-black/8 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#FFC928] hover:shadow-card">
+                {/* Quote icon on top */}
+                <div className="mb-4 flex items-center justify-between">
+                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#FFC928]/20 text-[#B45309]">
+                    <Quote size={18} className="rotate-180" />
+                  </span>
+                  <div className="flex gap-1">
+                    {Array.from({ length: r.rating }).map((_, idx) => (
+                      <Star
+                        key={idx}
+                        size={16}
+                        className="fill-[#FFC928] text-[#FFC928]"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Review Text */}
+                <p className="text-sm font-medium leading-relaxed text-[#374151]">
+                  &ldquo;{r.quote}&rdquo;
+                </p>
+
+                {/* User Avatar & Name */}
+                <div className="mt-6 flex items-center gap-3 border-t border-black/5 pt-4">
+                  <div className="relative h-11 w-11 overflow-hidden rounded-full border border-[#FFC928]">
+                    <Image
+                      src={r.avatar}
+                      alt={r.name}
+                      fill
+                      sizes="44px"
+                      className="object-cover"
                     />
-                  ))}
+                  </div>
+                  <div>
+                    <p className="font-display text-sm font-extrabold text-[#111111]">{r.name}</p>
+                    <p className="text-[11px] font-bold text-[#B45309]">Verified Cheese Lover</p>
+                  </div>
                 </div>
               </div>
-
-              {/* Review Text */}
-              <p className="text-sm font-medium leading-relaxed text-[#374151]">
-                &ldquo;{r.quote}&rdquo;
-              </p>
-
-              {/* User Avatar & Name */}
-              <div className="mt-6 flex items-center gap-3 border-t border-black/5 pt-4">
-                <div className="relative h-11 w-11 overflow-hidden rounded-full border border-[#FFC928]">
-                  <Image
-                    src={r.avatar}
-                    alt={r.name}
-                    fill
-                    sizes="44px"
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <p className="font-display text-sm font-extrabold text-[#111111]">{r.name}</p>
-                  <p className="text-[11px] font-bold text-[#B45309]">Verified Cheese Lover</p>
-                </div>
-              </div>
-            </div>
+            </ScrollReveal>
           ))}
 
           {/* Happy Customers Sticker */}
