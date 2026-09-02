@@ -33,7 +33,17 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const [values, setValues] = useState<Record<string, string>>({ name: "", phone: "", email: "", address: "", landmark: "", city: "", pincode: "", deliveryInstructions: "", orderNotes: "" });
+  const [values, setValues] = useState<Record<string, string>>({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+    landmark: "",
+    city: "",
+    pincode: "",
+    deliveryInstructions: "",
+    orderNotes: "",
+  });
   const [errors, setErrors] = useState<FieldError>({});
   const [orderType, setOrderType] = useState<"pickup" | "delivery">("pickup");
   const [method, setMethod] = useState<PaymentMethodType>("cash");
@@ -47,7 +57,6 @@ export default function CheckoutPage() {
   useEffect(() => {
     const saved = getCustomerDetails();
     if (saved && Object.keys(saved).length > 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setValues((prev) => ({ ...prev, ...saved }));
       setRemember(true);
     }
@@ -80,7 +89,12 @@ export default function CheckoutPage() {
       else if (!isValidPincode(values.pincode)) next.pincode = "Please enter a valid 6 digit pincode.";
     }
     setErrors(next);
-    return Object.keys(next).length === 0;
+    const valid = Object.keys(next).length === 0;
+    if (!valid) {
+      toast("Please fill in the required customer details above.");
+      window.scrollTo({ top: 220, behavior: "smooth" });
+    }
+    return valid;
   };
 
   const finalizeOrder = (paymentLabel: string, paymentDetail: string) => {
@@ -89,12 +103,24 @@ export default function CheckoutPage() {
     setOrderPlaced(true);
 
     if (remember) {
-      saveCustomerDetails({ name: values.name, phone: values.phone, email: values.email, address: values.address, city: values.city, pincode: values.pincode });
+      saveCustomerDetails({
+        name: values.name,
+        phone: values.phone,
+        email: values.email,
+        address: values.address,
+        city: values.city,
+        pincode: values.pincode,
+      });
     }
 
+    const orderId = generateOrderId();
     const order = {
-      id: generateOrderId(),
-      items: cart.map((i) => ({ productId: i.productId, quantity: i.quantity, customizations: i.customizations })),
+      id: orderId,
+      items: cart.map((i) => ({
+        productId: i.productId,
+        quantity: i.quantity,
+        customizations: i.customizations,
+      })),
       subtotal: totals.subtotal,
       discount: totals.discount,
       delivery: totals.delivery,
@@ -117,39 +143,37 @@ export default function CheckoutPage() {
       },
       createdAt: new Date().toISOString(),
     };
+
     saveOrder(order);
     clearCart();
-    router.push("/order-success");
+    toast("Order placed successfully! Redirecting...");
+    setTimeout(() => {
+      router.push(`/order-success?orderId=${orderId}`);
+    }, 150);
   };
 
   const handleCashOrder = () => {
     if (!validate()) return;
     if (minimumNotMet) return;
-    finalizeOrder("Cash", isDelivery ? "Cash on delivery" : "Pay at counter");
+    setProcessing(true);
+    setTimeout(() => {
+      setProcessing(false);
+      finalizeOrder("Cash", isDelivery ? "Cash on delivery" : "Pay at counter");
+    }, 400);
   };
 
   const handleOnlinePay = (details: { mode: OnlineMode; upi: string; card: string }) => {
     if (!validate()) return;
     if (minimumNotMet) return;
-    if (submittingRef.current) return;
-    submittingRef.current = true;
     setProcessing(true);
     setPaymentError("");
     setTimeout(() => {
-      const success = Math.random() > 0.15;
       setProcessing(false);
-      if (success) {
-        toast("Order placed successfully");
-        finalizeOrder("Online", details.mode);
-      } else {
-        submittingRef.current = false;
-        setPaymentError("Payment failed. Please check your details and try again.");
-      }
-    }, 1800);
+      finalizeOrder("Online", details.mode.toUpperCase() + (details.upi ? ` (${details.upi})` : ""));
+    }, 800);
   };
 
   const cancelOnline = () => {
-    if (processing) return;
     setProcessing(false);
   };
 
@@ -193,7 +217,7 @@ export default function CheckoutPage() {
                     (done ? "bg-brand-yellow text-ink-dark" : "bg-ink-card text-brand-gray")
                   }
                 >
-                  {done ? "✓" : idx}
+                  {done ? "?" : idx}
                 </span>
                 {idx < 4 && <div className={"h-0.5 flex-1 " + (done ? "bg-brand-yellow" : "bg-ink-line")} />}
               </div>
@@ -217,7 +241,16 @@ export default function CheckoutPage() {
             onClearSaved={() => {
               clearCustomerDetails();
               setRemember(false);
-              setValues((prev) => ({ ...prev, name: "", phone: "", email: "", address: "", landmark: "", city: "", pincode: "" }));
+              setValues((prev) => ({
+                ...prev,
+                name: "",
+                phone: "",
+                email: "",
+                address: "",
+                landmark: "",
+                city: "",
+                pincode: "",
+              }));
               toast("Saved details cleared");
             }}
           />
@@ -257,7 +290,7 @@ export default function CheckoutPage() {
                     <Loader2 size={18} className="animate-spin" /> Placing Order...
                   </>
                 ) : (
-                  <>Place Order — {formatPrice(totals.total)}</>
+                  <>Place Order ? {formatPrice(totals.total)}</>
                 )}
               </Button>
               <p className="mt-2 text-center text-xs text-brand-gray">
@@ -267,7 +300,7 @@ export default function CheckoutPage() {
           )}
 
           <p className="flex items-center justify-center gap-1.5 text-xs text-brand-gray">
-            <Lock size={12} /> This is a frontend demo — no real payment or delivery occurs.
+            <Lock size={12} /> This is a frontend demo ? no real payment or delivery occurs.
           </p>
         </div>
 

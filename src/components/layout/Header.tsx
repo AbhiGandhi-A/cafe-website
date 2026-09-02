@@ -14,7 +14,9 @@ import { OpenStatusPill } from "@/components/ui/OpenStatus";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/menu", label: "Menu" },
-  { href: "/about", label: "About" },
+  { href: "/#about", label: "About" },
+  { href: "/#store-locator", label: "Store Locator" },
+  { href: "/#gallery", label: "Gallery" },
   { href: "/#contact", label: "Contact" },
 ];
 
@@ -43,7 +45,7 @@ export function Header() {
             <p className="flex items-center gap-1.5 truncate">
               <Flame size={14} className="shrink-0 text-brand-yellow" />
               <span className="truncate">
-                Fresh, hot &amp; cheesy — order your favourites today!
+                {cafeInfo.timingDisplay} ? Ground floor Signature Galleria, Ankleshwar
               </span>
             </p>
             <div className="flex shrink-0 items-center gap-3">
@@ -52,7 +54,7 @@ export function Header() {
                 className="group inline-flex items-center gap-0.5 text-brand-yellow hover:text-brand-yellow-light"
               >
                 View Menu
-                <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                <span className="transition-transform group-hover:translate-x-0.5">?</span>
               </Link>
               <button
                 type="button"
@@ -69,8 +71,8 @@ export function Header() {
 
       <header
         className={classNames(
-          "sticky top-0 z-50 border-b border-ink-line bg-ink-dark/80 backdrop-blur-xl transition-all duration-300",
-          scrolled ? "" : ""
+          "sticky top-0 z-50 border-b border-ink-line bg-ink-dark/90 backdrop-blur-xl transition-all duration-300",
+          scrolled ? "shadow-card" : ""
         )}
       >
         <div
@@ -89,10 +91,10 @@ export function Header() {
                   key={link.href}
                   href={link.href}
                   className={classNames(
-                    "group relative rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                    "group relative rounded-full px-3.5 py-2 text-sm font-semibold transition-colors",
                     active
                       ? "text-brand-yellow"
-                      : "text-brand-cream/70 hover:text-brand-cream"
+                      : "text-brand-cream/80 hover:text-brand-cream"
                   )}
                 >
                   {link.label}
@@ -124,20 +126,18 @@ export function Header() {
             >
               <ShoppingBag size={20} />
               {cartCount > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-brand-red px-1 text-[11px] font-bold text-white">
+                <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-brand-yellow px-1 text-[11px] font-black text-ink-dark">
                   {cartCount}
                 </span>
               )}
             </button>
 
-            <Button
+            <Link
               href="/menu"
-              variant="primary"
-              size="sm"
-              className="hidden sm:inline-flex"
+              className="hidden items-center gap-1.5 rounded-full bg-brand-yellow px-5 py-2 text-sm font-black text-ink-dark transition-all hover:bg-brand-yellow-light hover:shadow-glow sm:inline-flex"
             >
-              Order Now
-            </Button>
+              Order Now <span className="font-bold">?</span>
+            </Link>
 
             <button
               type="button"
@@ -180,17 +180,6 @@ export function Header() {
               </Button>
               <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-3">
                 <OpenStatusPill />
-              </div>
-              <div className="mt-3 flex items-center gap-4 text-xs text-brand-cream/60">
-                <a href={cafeInfo.instagram} target="_blank" rel="noopener noreferrer">
-                  Instagram
-                </a>
-                <a href={cafeInfo.facebook} target="_blank" rel="noopener noreferrer">
-                  Facebook
-                </a>
-                <a href={cafeInfo.whatsapp} target="_blank" rel="noopener noreferrer">
-                  WhatsApp
-                </a>
               </div>
             </nav>
           </div>

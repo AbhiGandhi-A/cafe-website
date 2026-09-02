@@ -1,15 +1,26 @@
 export const cafeInfo = {
   name: "Crazy Cheesy Cafe",
-  tagline: "Cheesy cravings, made crazy good.",
+  tagline: "Good Food = Good Mood",
   shortDescription:
-    "Fresh sandwiches, loaded pizzas, crispy momos and your favourite cafe bites — all made with extra cheesy goodness.",
-  phone: "+91 XXXXX XXXXX",
+    "Loaded sandwiches, pizzas, momos and cafe favourites made fresh for every craving.",
+  phone: "091064 39844",
+  phoneFormatted: "+91 91064 39844",
   email: "hello@crazycheesycafe.com",
-  location: "Your Cafe Location",
+  location: "Signature Galleria, Ankleshwar, Gujarat",
+  addressLine: "Ground floor, Signature Galleria, A-33, near Mahavir Turning, Happy Nagar, Ankleshwar, Gujarat 393001",
+  landmark: "Near Mahavir Turning, Happy Nagar",
+  city: "Ankleshwar",
+  state: "Gujarat",
+  pincode: "393001",
+  timingDisplay: "Open · Closes 11 pm",
+  hoursDetail: "Mon – Sun: 10:00 AM – 11:00 PM",
+  rating: 5.0,
+  reviewsCount: 14,
+  mapQuery: "Crazy Cheesy Cafe Signature Galleria Ankleshwar Gujarat 393001",
+  mapDirectionsUrl: "https://www.google.com/maps/search/?api=1&query=Crazy+Cheesy+Cafe+Ground+floor+Signature+Galleria+A-33+near+Mahavir+Turning+Happy+Nagar+Ankleshwar+Gujarat+393001",
   instagram: "https://instagram.com",
   facebook: "https://facebook.com",
-  whatsapp: "https://wa.me/91XXXXXXXXXX",
-  addressLine: "Shop No. 00, Example Street, Your City",
+  whatsapp: "https://wa.me/919106439844",
 };
 
 export const storeConfig = {
@@ -17,7 +28,7 @@ export const storeConfig = {
   deliveryFee: 30,
   freeDeliveryAbove: 500,
   minimumDeliveryOrder: 150,
-  phone: "",
+  phone: "091064 39844",
   currency: "₹",
 };
 
@@ -30,6 +41,7 @@ export const openingHours = {
   open: "10:00",
   close: "23:00",
   days: "Mon–Sun",
+  status: "Open · Closes 11 pm",
 };
 
 export const coupons: Coupon[] = [

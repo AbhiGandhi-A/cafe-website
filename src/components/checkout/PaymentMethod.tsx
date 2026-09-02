@@ -53,34 +53,26 @@ export function PaymentMethod({
 
   const handleOnlinePay = () => {
     if (onlineMode === "upi") {
-      if (!/^[\w.\-]+@[\w]+$/.test(upi.trim())) {
-        setLocalError("Please enter a valid UPI ID (e.g. name@upi) or select an app.");
-        return;
-      }
+      const upiValue = upi.trim() || `${upiApp}@oksbi`;
+      setLocalError("");
+      onPay({ mode: onlineMode, upi: upiValue, card: "" });
     } else if (onlineMode === "card") {
-      if (cardNumber.replace(/\s/g, "").length < 12) {
-        setLocalError("Please enter a valid card number.");
+      const cleaned = cardNumber.replace(/\s/g, "");
+      if (cleaned.length < 12 && !cardNumber) {
+        setCardNumber("4242 4242 4242 4242");
+        setCardName("Crazy Cheese Lover");
+        setExpiry("12/28");
+        setCvv("123");
+        setLocalError("");
+        onPay({ mode: onlineMode, upi: "", card: "4242 4242 4242 4242" });
         return;
       }
-      if (!cardName.trim()) {
-        setLocalError("Please enter the cardholder name.");
-        return;
-      }
-      if (!/^\d{2}\/\d{2}$/.test(expiry)) {
-        setLocalError("Please enter a valid expiry (MM/YY).");
-        return;
-      }
-      if (cvv.length < 3) {
-        setLocalError("Please enter a valid CVV.");
-        return;
-      }
+      setLocalError("");
+      onPay({ mode: onlineMode, upi: "", card: cardNumber.trim() || "4242 4242 4242 4242" });
     } else {
       setLocalError("");
       onPay({ mode: onlineMode, upi: "", card: "" });
-      return;
     }
-    setLocalError("");
-    onPay({ mode: onlineMode, upi: upi.trim() || upiApp, card: cardNumber.trim() });
   };
 
   return (
@@ -89,7 +81,7 @@ export function PaymentMethod({
         Payment Method
       </h2>
       <p className="mt-1 flex items-center gap-1.5 text-sm text-brand-gray">
-        <ShieldCheck size={14} className="text-green-500" /> 🔒 Secure demo payment — no real charge
+        <ShieldCheck size={14} className="text-green-500" /> ?? Secure demo payment ? no real charge
       </p>
 
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -192,7 +184,7 @@ export function PaymentMethod({
                   aria-label="UPI ID"
                 />
                 <p className="mt-1 text-xs text-brand-gray">
-                  Demo — enter any UPI ID like example@upi
+                  Demo ? enter any UPI ID or select an app above
                 </p>
               </div>
             )}
@@ -287,7 +279,7 @@ export function PaymentMethod({
             )}
           </button>
           <p className="mt-2 text-center text-xs text-brand-gray">
-            Frontend mock — the payment does not actually charge you.
+            Frontend mock ? the payment does not actually charge you.
           </p>
         </div>
       )}

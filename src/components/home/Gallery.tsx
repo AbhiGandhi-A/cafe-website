@@ -1,52 +1,63 @@
-import Image from "next/image";
-import { images } from "@/data/menu";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+"use client";
 
-const shots = [
-  { src: images.sandwich, caption: "Loaded Sandwiches", tall: false },
-  { src: images.pizza, caption: "Cheesy Pizzas", tall: true },
-  { src: images.momos, caption: "Crispy Momos", tall: false },
-  { src: images.garlic, caption: "Garlic Bread", tall: false },
-  { src: images.beverages, caption: "Chilled Drinks", tall: false },
-  { src: images.dessert, caption: "Sweet Endings", tall: true },
+import Image from "next/image";
+import Link from "next/link";
+import { images } from "@/data/menu";
+
+const galleryItems = [
+  { src: images.pizza, name: "Cheesy Pizza" },
+  { src: images.grill, name: "Loaded Sandwich" },
+  { src: images.momos, name: "Hot Momos" },
+  { src: images.beverages, name: "Chilled Shakes" },
+  { src: images.garlic, name: "Garlic Bread" },
+  { src: images.burger, name: "Gourmet Burgers" },
 ];
 
 export function Gallery() {
   return (
-    <section className="py-16 sm:py-20">
+    <section id="gallery" className="relative scroll-mt-20 overflow-hidden bg-ink-dark py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          label="Cheesy Moments"
-          title="Fresh From The Kitchen"
-          description="A peek at what gets made fresh, every single day."
-        />
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
-          {shots.map((shot, i) => (
+        <h2 className="font-display text-3xl font-black uppercase text-brand-cream sm:text-4xl">
+          Our <span className="font-sans italic text-brand-yellow">Cheesy</span> Moments
+        </h2>
+
+        {/* Gallery Grid */}
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7 sm:gap-4">
+          {galleryItems.map((item, idx) => (
             <div
-              key={shot.src + i}
-              className={`group relative overflow-hidden rounded-3xl border border-white/10 shadow-card ${
-                shot.tall ? "md:row-span-2" : ""
-              }`}
+              key={item.name + idx}
+              className="group relative aspect-square overflow-hidden rounded-2xl border border-white/10 bg-ink-card transition-all duration-300 hover:-translate-y-1 hover:border-brand-yellow/50 hover:shadow-card"
             >
-              <div
-                className={`relative w-full ${
-                  shot.tall ? "aspect-[3/4] md:h-full" : "aspect-[3/4]"
-                }`}
-              >
-                <Image
-                  src={shot.src}
-                  alt={shot.caption}
-                  fill
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-70 transition-opacity group-hover:opacity-90" />
-                <p className="absolute bottom-3 left-3 right-3 translate-y-2 text-sm font-bold text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                  {shot.caption}
-                </p>
-              </div>
+              <Image
+                src={item.src}
+                alt={item.name}
+                fill
+                sizes="(max-width: 640px) 50vw, 15vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+              <p className="absolute bottom-2 left-2 right-2 text-center text-xs font-bold text-brand-yellow opacity-0 transition-opacity group-hover:opacity-100">
+                {item.name}
+              </p>
             </div>
           ))}
+
+          {/* 7th CTA Card */}
+          <div className="col-span-2 flex aspect-square flex-col items-center justify-center rounded-2xl border border-brand-yellow/30 bg-ink-card p-4 text-center sm:col-span-1 lg:col-span-1">
+            <span className="text-2xl">??</span>
+            <p className="font-display mt-1 text-xs font-black uppercase text-brand-cream">
+              GOOD FOOD
+            </p>
+            <p className="font-display text-xs font-black uppercase text-brand-yellow">
+              GOOD PEOPLE
+            </p>
+            <Link
+              href="/menu"
+              className="mt-3 rounded-full bg-brand-yellow px-3 py-1.5 text-[11px] font-black text-ink-dark transition-all hover:bg-brand-yellow-light"
+            >
+              Get Gallery ?
+            </Link>
+          </div>
         </div>
       </div>
     </section>

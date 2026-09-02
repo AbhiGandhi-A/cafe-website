@@ -1,29 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, Home, MapPin, PackageCheck, RefreshCw, Truck } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { CheckCircle2, Home, MapPin, PackageCheck, Phone, RefreshCw, Truck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { getItemById } from "@/data/menu";
-import { orderTimings } from "@/data/cafe";
+import { cafeInfo, orderTimings } from "@/data/cafe";
 import { formatPrice } from "@/lib/utils";
-import { getLastOrder, type SavedOrder } from "@/lib/orders";
+import { getOrderById, getLastOrder, type SavedOrder } from "@/lib/orders";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/components/ui/Toast";
 
 const timeline = ["Order Placed", "Preparing", "Ready / Out for Delivery", "Delivered"];
 
 export default function OrderSuccessPage() {
+  const searchParams = useSearchParams();
+  const orderIdParam = searchParams.get("orderId");
   const [order, setOrder] = useState<SavedOrder | null>(null);
   const [loaded, setLoaded] = useState(false);
   const { addToCart } = useCart();
   const { toast } = useToast();
 
   useEffect(() => {
-    const o = getLastOrder();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOrder(o);
+    let o = null;
+    if (orderIdParam) {
+      o = getOrderById(orderIdParam);
+    }
+    if (!o) {
+      o = getLastOrder();
+    }
+    setOrder(o ?? null);
     setLoaded(true);
-  }, []);
+  }, [orderIdParam]);
 
   if (!loaded) {
     return (
@@ -164,7 +172,7 @@ export default function OrderSuccessPage() {
             {order.discount > 0 && (
               <div className="flex justify-between text-green-500">
                 <span>Discount</span>
-                <span>−{formatPrice(order.discount)}</span>
+                <span>?{formatPrice(order.discount)}</span>
               </div>
             )}
             <div className="flex justify-between text-brand-gray">

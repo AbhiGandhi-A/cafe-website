@@ -20,16 +20,20 @@ const cdnBase =
   "https://images.unsplash.com/photo-";
 
 export const images = {
-  placeholder: cdnBase + "1515003197210-e0cd71810b5f?auto=format&fit=crop&w=600&q=70",
-  sandwich: cdnBase + "1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=70",
-  toast: cdnBase + "1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=70",
-  grill: cdnBase + "1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=70",
-  garlic: cdnBase + "1571091718767-18b5b1457add?auto=format&fit=crop&w=600&q=70",
-  rimzim: cdnBase + "1553909489-cd47e0907980?auto=format&fit=crop&w=600&q=70",
-  momos: cdnBase + "1496116218417-1a781b1c416c?auto=format&fit=crop&w=600&q=70",
-  pizza: cdnBase + "1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=70",
-  beverages: cdnBase + "1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=70",
-  dessert: cdnBase + "1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=70",
+  placeholder: "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=800&q=80",
+  sandwich: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80",
+  toast: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80",
+  grill: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80",
+  garlic: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?auto=format&fit=crop&w=800&q=80",
+  rimzim: "https://images.unsplash.com/photo-1553909489-cd47e0907980?auto=format&fit=crop&w=800&q=80",
+  momos: "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&w=800&q=80",
+  pizza: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",
+  pizzaPull: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=80",
+  beverages: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=800&q=80",
+  dessert: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80",
+  burger: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",
+  cafeVibes: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80",
+  cafeInterior: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=800&q=80",
 };
 
 export const menuItems: MenuItem[] = [
